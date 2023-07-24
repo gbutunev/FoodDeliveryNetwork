@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33801.468
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoodDeliveryNetwork.Web", "FoodDeliveryNetwork\FoodDeliveryNetwork.Web.csproj", "{492961A0-96F0-4DF6-833F-DFC0DB4ACC58}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoodDeliveryNetwork.Data", "FoodDeliveryNetwork.Data\FoodDeliveryNetwork.Data.csproj", "{F668EB16-1319-435A-B168-9682E80C0086}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{492961A0-96F0-4DF6-833F-DFC0DB4ACC58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{492961A0-96F0-4DF6-833F-DFC0DB4ACC58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{492961A0-96F0-4DF6-833F-DFC0DB4ACC58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{492961A0-96F0-4DF6-833F-DFC0DB4ACC58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F668EB16-1319-435A-B168-9682E80C0086}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F668EB16-1319-435A-B168-9682E80C0086}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F668EB16-1319-435A-B168-9682E80C0086}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F668EB16-1319-435A-B168-9682E80C0086}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D331C20D-6914-42E1-942C-260FF05DC4E2}
+	EndGlobalSection
+EndGlobal
