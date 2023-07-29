@@ -6,10 +6,10 @@
 
         public static class RoleNames
         {
-            public static string AdministratorRole = "Administrator";
-            public static string OwnerRole = "Owner";
-            public static string CourierName = "Courier";
-            public static string DispatcherName = "Dispatcher";
+            public const string AdministratorRole = "Administrator";
+            public const string OwnerRole = "Owner";
+            public const string CourierName = "Courier";
+            public const string DispatcherName = "Dispatcher";
         }
     }
 }

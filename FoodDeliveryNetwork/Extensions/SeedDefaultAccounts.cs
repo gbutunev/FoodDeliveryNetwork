@@ -43,7 +43,7 @@ namespace FoodDeliveryNetwork.Web.Extensions
                         FirstName = "Admin",
                         LastName = "Adminov",
                         PhoneNumber = "0888888888",
-                        PhoneNumberConfirmed = true,
+                        PhoneNumberConfirmed = true,                        
                     };
 
                     await userManager.CreateAsync(adminUser);

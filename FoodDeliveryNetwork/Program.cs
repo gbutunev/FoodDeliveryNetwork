@@ -4,6 +4,7 @@ using FoodDeliveryNetwork.Services.Data;
 using FoodDeliveryNetwork.Services.Data.Contracts;
 using FoodDeliveryNetwork.Web.Extensions;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace FoodDeliveryNetwork.Web
@@ -34,18 +35,22 @@ namespace FoodDeliveryNetwork.Web
                 .AddRoles<IdentityRole<Guid>>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            builder.Services.AddControllersWithViews();
+            builder.Services.AddControllersWithViews(options =>
+            {
+                options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+            });
 
             builder.Services.AddScoped<IOwnerApplicationService, OwnerApplicationService>();
 
             var app = builder.Build();
 
-            //seed data
-            await app.SeedDefaultAccountsAsync();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
+                //seed dev data
+                await app.SeedDefaultAccountsAsync();
+
                 app.UseMigrationsEndPoint();
             }
             else
