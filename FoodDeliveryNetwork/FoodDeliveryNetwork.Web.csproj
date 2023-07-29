@@ -24,6 +24,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FoodDeliveryNetwork.Data\FoodDeliveryNetwork.Data.csproj" />
+    <ProjectReference Include="..\FoodDeliveryNetwork.Services.Data\FoodDeliveryNetwork.Services.Data.csproj" />
+    <ProjectReference Include="..\FoodDeliveryNetwork.Web.ViewModels\FoodDeliveryNetwork.Web.ViewModels.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -31,7 +33,6 @@
     <Folder Include="Areas\Admin\Data\" />
     <Folder Include="Areas\Admin\Models\" />
     <Folder Include="Areas\Admin\Views\" />
-    <Folder Include="Views\OwnerApplication\" />
   </ItemGroup>
 
 </Project>

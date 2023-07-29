@@ -1,0 +1,66 @@
+﻿@using FoodDeliveryNetwork.Data.Models;
+@using FoodDeliveryNetwork.Web.ViewModels.OwnerApplication;
+
+@model OwnerApplicationViewModel
+
+@switch (Model.AccessToApplicationPage)
+{
+    case AccessToApplicationPage.Pending:
+        <div class="alert alert-info" role="alert">
+            Your application is pending. Please wait for the admin to approve it.
+        </div>
+        break;
+    case AccessToApplicationPage.Accepted:
+        <div class="alert alert-success" role="alert">
+            Your application is already approved. You can now manage your restaurants.
+        </div>
+        break;
+    case AccessToApplicationPage.CanApply:
+        <div class="alert alert-info" role="alert">
+            You can apply for a restaurant owner account.
+        </div>
+        @using (Html.BeginForm())
+        {
+            <div class="form-group">
+                @Html.LabelFor(model => model.CompanyName)
+                @Html.TextBoxFor(model => model.CompanyName, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.CompanyName, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.EIK)
+                @Html.TextBoxFor(model => model.EIK, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.EIK, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.HeadquartersFullAddress)
+                @Html.TextBoxFor(model => model.HeadquartersFullAddress, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.HeadquartersFullAddress, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.OwnerFullName)
+                @Html.TextBoxFor(model => model.OwnerFullName, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.OwnerFullName, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.OwnerEGN)
+                @Html.TextBoxFor(model => model.OwnerEGN, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.OwnerEGN, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="d-flex mt-2">
+                <button type="submit" class="btn btn-primary ms-auto">Apply</button>
+            </div>
+        }
+
+        @section Scripts {
+            @{
+                await Html.RenderPartialAsync("_ValidationScriptsPartial");
+            }
+        }
+        break;
+}
+

@@ -1,5 +1,7 @@
 using FoodDeliveryNetwork.Data;
 using FoodDeliveryNetwork.Data.Models;
+using FoodDeliveryNetwork.Services.Data;
+using FoodDeliveryNetwork.Services.Data.Contracts;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -32,6 +34,8 @@ namespace FoodDeliveryNetwork.Web
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddScoped<IOwnerApplicationService, OwnerApplicationService>();
 
             var app = builder.Build();
 

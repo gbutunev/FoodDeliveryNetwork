@@ -19,10 +19,10 @@ namespace FoodDeliveryNetwork.Services.Data
             await dbContext.SaveChangesAsync();
         }
 
-        public async Task<AccessToApplicationPage> CheckOwnerStatus(Guid userId)
+        public async Task<AccessToApplicationPage> CheckOwnerStatus(string userId)
         {
             var lastApplication = await dbContext.OwnerApplications
-                .Where(x => x.ApplicationUserId == userId)
+                .Where(x => x.ApplicationUserId.ToString() == userId)
                 .OrderByDescending(x => x.CreatedOn)
                 .FirstOrDefaultAsync();
 
