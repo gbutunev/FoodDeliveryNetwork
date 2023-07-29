@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 namespace FoodDeliveryNetwork.Data.Models
 {
     [Index(nameof(PhoneNumber), IsUnique = true)]
+    [Index(nameof(UserName), IsUnique = true)]
     public class ApplicationUser : IdentityUser<Guid>
     {
         public ApplicationUser()

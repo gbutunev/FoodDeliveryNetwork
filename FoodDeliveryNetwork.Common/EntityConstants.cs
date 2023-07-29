@@ -12,6 +12,9 @@
 
             public const int PhoneNumberMinLength = 4;
             public const int PhoneNumberMaxLength = 15;
+
+            public const int UsernameMinLength = 4;
+            public const int UsernameMaxLength = 30;
         }
     }
 }
