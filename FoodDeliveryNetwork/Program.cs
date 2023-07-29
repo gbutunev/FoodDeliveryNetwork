@@ -2,6 +2,7 @@ using FoodDeliveryNetwork.Data;
 using FoodDeliveryNetwork.Data.Models;
 using FoodDeliveryNetwork.Services.Data;
 using FoodDeliveryNetwork.Services.Data.Contracts;
+using FoodDeliveryNetwork.Web.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,7 +10,7 @@ namespace FoodDeliveryNetwork.Web
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +39,9 @@ namespace FoodDeliveryNetwork.Web
             builder.Services.AddScoped<IOwnerApplicationService, OwnerApplicationService>();
 
             var app = builder.Build();
+
+            //seed data
+            await app.SeedDefaultAccountsAsync();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
