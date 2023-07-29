@@ -20,8 +20,16 @@ namespace FoodDeliveryNetwork.Data.Models
         public string EIK { get; set; }
 
         [Required]
+        [MaxLength(EntityConstants.OwnerConstants.CompanyNameMaxLength)]
+        public string CompanyName { get; set; }
+
+        [Required]
         [MaxLength(EntityConstants.OwnerConstants.FullNameMaxLength)]
-        public string FullName { get; set; }
+        public string OwnerFullName { get; set; }
+
+        [Required]
+        [MaxLength(EntityConstants.OwnerConstants.EGNLength)]
+        public string OwnerEGN { get; set; }
 
         [Required]
         [MaxLength(EntityConstants.OwnerConstants.HeadquartersFullAddressMaxLength)]
@@ -29,5 +37,8 @@ namespace FoodDeliveryNetwork.Data.Models
 
         [Required]
         public OwnerApplicationStatus ApplicationStatus { get; set; } = OwnerApplicationStatus.Pending;
+
+        [Required]
+        public DateTime CreatedOn { get; set; }
     }
 }

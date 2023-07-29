@@ -21,5 +21,14 @@ namespace FoodDeliveryNetwork.Data
 
             base.OnModelCreating(builder);
         }
+
+        public DbSet<CourierToRestaurant> CourierToRestaurants { get; set; }
+        public DbSet<CustomerAddress> CustomerAddresses { get; set; }
+        public DbSet<Dish> Dishes { get; set; }
+        public DbSet<DispatcherToRestaurant> DispatcherToRestaurants { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OwnerApplication> OwnerApplications { get; set; }
+        public DbSet<Restaurant> Restaurants { get; set; }
+        public DbSet<RestaurantOwner> RestaurantOwners { get; set; }
     }
 }

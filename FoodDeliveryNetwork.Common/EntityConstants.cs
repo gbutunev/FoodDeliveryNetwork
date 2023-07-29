@@ -27,6 +27,11 @@
 
             public const int HeadquartersFullAddressMinLength = 8;
             public const int HeadquartersFullAddressMaxLength = 150;
+
+            public const int CompanyNameMinLength = 2;
+            public const int CompanyNameMaxLength = 50;
+
+            public const int EGNLength = 10;
         }
 
         public static class CustomerConstants
