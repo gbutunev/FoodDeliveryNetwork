@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <Nullable>enable</Nullable>
+    <!--<Nullable>enable</Nullable>-->
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aspnet-FoodDeliveryNetwork-69098bdd-ce33-4e93-8726-1a10b7fc6475</UserSecretsId>
   </PropertyGroup>
