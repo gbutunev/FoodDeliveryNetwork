@@ -64,3 +64,6 @@ namespace FoodDeliveryNetwork.Web
         }
     }
 }
+
+//TODO: Manage:email check for existing email
+//TODO: Manage:phoneNumber check for existing phoneNumber

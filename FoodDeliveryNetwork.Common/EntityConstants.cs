@@ -1,7 +1,7 @@
 ﻿namespace FoodDeliveryNetwork.Common
 {
     public static class EntityConstants
-    {
+    {        
         public static class User
         {
             public const int NameMinLength = 2;
