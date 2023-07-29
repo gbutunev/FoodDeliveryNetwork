@@ -2,6 +2,7 @@
 using FoodDeliveryNetwork.Data;
 using FoodDeliveryNetwork.Data.Models;
 using Microsoft.AspNetCore.Identity;
+using System.Reflection;
 
 namespace FoodDeliveryNetwork.Web.Extensions
 {
@@ -15,9 +16,19 @@ namespace FoodDeliveryNetwork.Web.Extensions
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
                 var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
-                if (!await roleManager.RoleExistsAsync(AppConstants.AdministratorRoleName))
+                //iterate through all roles and create them if they don't exist
+                Type roleNamesType = typeof(AppConstants.RoleNames);
+                FieldInfo[] fields = roleNamesType.GetFields(BindingFlags.Public | BindingFlags.Static);
+                var roleFields = fields.Where(f => f.FieldType == typeof(string));
+
+                foreach (var roleField in roleFields)
                 {
-                    await roleManager.CreateAsync(new IdentityRole<Guid>(AppConstants.AdministratorRoleName));
+                    var roleName = roleField.GetValue(null) as string;
+
+                    if (!await roleManager.RoleExistsAsync(roleName))
+                    {
+                        await roleManager.CreateAsync(new IdentityRole<Guid>(roleName));
+                    }
                 }
 
                 //check if user with username admin1 exists and if they have admin role
@@ -32,7 +43,7 @@ namespace FoodDeliveryNetwork.Web.Extensions
                         FirstName = "Admin",
                         LastName = "Adminov",
                         PhoneNumber = "0888888888",
-                        PhoneNumberConfirmed = true,                        
+                        PhoneNumberConfirmed = true,
                     };
 
                     await userManager.CreateAsync(adminUser);
@@ -41,9 +52,9 @@ namespace FoodDeliveryNetwork.Web.Extensions
                     await userManager.AddPasswordAsync(adminUser, "admin1");
                 }
 
-                if (!await userManager.IsInRoleAsync(adminUser, AppConstants.AdministratorRoleName))
+                if (!await userManager.IsInRoleAsync(adminUser, AppConstants.RoleNames.AdministratorRole))
                 {
-                    await userManager.AddToRoleAsync(adminUser, AppConstants.AdministratorRoleName);
+                    await userManager.AddToRoleAsync(adminUser, AppConstants.RoleNames.AdministratorRole);
                 }
             }
         }
