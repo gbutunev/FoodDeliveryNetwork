@@ -21,6 +21,8 @@
         </div>
         @using (Html.BeginForm())
         {
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
             <div class="form-group">
                 @Html.LabelFor(model => model.CompanyName)
                 @Html.TextBoxFor(model => model.CompanyName, new { @class = "form-control" })

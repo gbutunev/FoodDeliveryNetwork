@@ -7,7 +7,7 @@
     ViewBag.Title = "All Pending Applications";
 }
 
-@if (!string.IsNullOrWhiteSpace(TempData.Peek("result") as string))
+@*@if (!string.IsNullOrWhiteSpace(TempData.Peek("result") as string))
 {
     switch (TempData["result"] as string)
     {
@@ -24,7 +24,7 @@
             </div>
             break;
     }
-}
+}*@
 
 @*Search bar*@
 @using (Html.BeginForm("Pending", "Admin", FormMethod.Get, new { @class = "row gy-2 gx-3 align-items-center mb-5" }))

@@ -1,0 +1,53 @@
+﻿@using FoodDeliveryNetwork.Web.ViewModels.Owner;
+
+@model RestaurantFormModel
+
+@using (Html.BeginForm("NewRestaurant", "Owner", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Name)
+        @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.Name,"", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Description)
+        @Html.TextBoxFor(model => model.Description, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.Description,"", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Address)
+        @Html.TextBoxFor(model => model.Address, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.Address,"", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.PhoneNumber)
+        @Html.TextBoxFor(model => model.PhoneNumber, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.PhoneNumber,"", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Handle)
+        @Html.TextBoxFor(model => model.Handle, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.Handle, "", new { @class = "text-danger" })
+    </div>
+
+@*    <div class="form-grup">
+        <label for="formFile" class="form-label">Background image</label>
+        <input name="Image" class="form-control" type="file" id="formFile" accept=".jpg, .jpeg, .png">
+        <small class="form-text text-muted">Accepts JPG and PNG files under 5MB.</small>
+        @Html.ValidationMessageFor(model => model.Image, "", new { @class = "text-danger" })
+    </div>*@
+
+    <div class="d-flex mt-2">
+        <input type="submit" value="Create" class="btn btn-primary ms-auto" />
+    </div>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
