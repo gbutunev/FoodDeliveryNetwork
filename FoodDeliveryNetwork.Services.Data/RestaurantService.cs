@@ -101,5 +101,58 @@ namespace FoodDeliveryNetwork.Services.Data
                 return 0;
             }
         }
+
+        public async Task<RestaurantFormModel> GetRestaurantByIdAsync(Guid restaurantId)
+        {
+            return await dbContext
+                .Restaurants
+                .Where(x => x.Id == restaurantId)
+                .Select(x => new RestaurantFormModel
+                {
+                    Name = x.Name,
+                    Address = x.Address,
+                    Handle = x.Handle,
+                    Description = x.Description,
+                    PhoneNumber = x.PhoneNumber,
+                    OwnerId = x.OwnerId.ToString()
+                })
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<int> EditRestaurantAsync(string id, RestaurantFormModel model)
+        {
+            if (model.OwnerId is null || id is null || id == Guid.Empty.ToString()) return -1;
+
+            var owner = await userManager.FindByIdAsync(model.OwnerId);
+            if (owner is null) return -1;
+
+            bool isOwner = await userManager.IsInRoleAsync(owner, AppConstants.RoleNames.OwnerRole);
+            if (!isOwner) return -2;
+
+            bool restaurantWithSameHandleExists = await dbContext.Restaurants.AnyAsync(x => x.Handle == model.Handle && x.Id.ToString() != id);
+            if (restaurantWithSameHandleExists) return -3;
+            bool restaurantWithSameNameExists = await dbContext.Restaurants.AnyAsync(x => x.Name == model.Name && x.Id.ToString() != id);
+            if (restaurantWithSameNameExists) return -4;
+
+            try
+            {
+                var restaurant = await dbContext.Restaurants.FindAsync(Guid.Parse(id));
+
+                restaurant.Name = model.Name;
+                restaurant.Address = model.Address;
+                restaurant.Description = model.Description;
+                restaurant.Handle = model.Handle;
+                restaurant.PhoneNumber = model.PhoneNumber;
+
+                dbContext.Restaurants.Update(restaurant);
+                await dbContext.SaveChangesAsync();
+
+                return 1;
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
+        }
     }
 }

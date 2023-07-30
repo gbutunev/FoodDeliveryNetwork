@@ -82,9 +82,60 @@ namespace FoodDeliveryNetwork.Web.Controllers
             if (userIsOwner)
             {
                 int r = await restaurantService.DeleteRestaurantAsync(restaurantId);
-            }            
+            }
 
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditRestaurant(string id)
+        {
+            var userId = User.GetId();
+
+            bool userIsOwner = await restaurantService.RestaurantIsOwnedByUserAsync(id, userId);
+
+            if (userIsOwner)
+            {
+                RestaurantFormModel restaurant = await restaurantService.GetRestaurantByIdAsync(Guid.Parse(id));
+
+                return View(restaurant);
+            }
+            else
+            {
+                return RedirectToAction(nameof(Index));
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditRestaurant(string id, RestaurantFormModel model)
+        {
+            int r = await restaurantService.EditRestaurantAsync(id, model);
+
+            if (r == 1)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                switch (r)
+                {
+                    case -4:
+                        ModelState.AddModelError(nameof(model.Name), "Restaurant with this name already exists.");
+                        return View(model);
+                    case -3:
+                        ModelState.AddModelError(nameof(model.Handle), "Restaurant with this handle already exists.");
+                        return View(model);
+                    case -2:
+                        ModelState.AddModelError("", "User does not have required permissions!");
+                        return View(model);
+                    case -1:
+                    case 0:
+                        ModelState.AddModelError("", "Something went wrong!");
+                        return View(model);
+                    default:
+                        throw new Exception("Unknown error!");
+                }
+            }
         }
     }
 }
