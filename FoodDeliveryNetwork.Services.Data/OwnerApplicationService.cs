@@ -36,6 +36,8 @@ namespace FoodDeliveryNetwork.Services.Data
             if (application is null || newStatus is null)
                 return -1;
 
+
+
             try
             {
                 if (newStatus == OwnerApplicationStatus.Rejected)
@@ -49,6 +51,11 @@ namespace FoodDeliveryNetwork.Services.Data
 
                 if (newStatus == OwnerApplicationStatus.Approved)
                 {
+                    //0. check if user is already in a role
+                    var userRoles = await userManager.GetRolesAsync(application.ApplicationUser);
+                    if (userRoles.Count > 0)
+                        return -3;
+
                     //1. Update Application
                     application.ApplicationStatus = OwnerApplicationStatus.Approved;
                     dbContext.OwnerApplications.Update(application);
@@ -65,7 +72,7 @@ namespace FoodDeliveryNetwork.Services.Data
                     };
                     dbContext.RestaurantOwners.Add(restaurantOwner);
 
-                    //3. Add user to role
+                    //3. Add user to role                    
                     await userManager.AddToRoleAsync(application.ApplicationUser, AppConstants.RoleNames.OwnerRole);
 
                     await dbContext.SaveChangesAsync();
