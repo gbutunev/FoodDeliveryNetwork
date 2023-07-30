@@ -1,0 +1,57 @@
+﻿@using FoodDeliveryNetwork.Data.Models;
+@using FoodDeliveryNetwork.Web.ViewModels.Admin;
+
+@model ApplicationChangeStatusViewModel
+
+<div class="card mb-2">
+    <div class="card-header">
+        Application @Model.Id
+    </div>
+    <div class="card-body">
+        <div class="row mx-1">
+            <div class="col">
+                <div class="row">
+                    Company name: @Model.CompanyName
+                </div>
+                <div class="row">
+                    EIK: @Model.EIK
+                </div>
+                <div class="row">
+                    Address: @Model.HeadquartersFullAddress
+                </div>
+            </div>
+            <div class="col">
+                <div class="row">
+                    Owner: @Model.OwnerFullName
+                </div>
+                <div class="row">
+                    EGN: @Model.OwnerEGN
+                </div>
+                <div class="row">
+                    Phone number: @Model.OwnerPhoneNumber
+                </div>
+            </div>
+            <div class="col">
+                <div class="row">
+                    Created on: @Model.CreatedOn
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 clearfix">
+            @using (Html.BeginForm(FormMethod.Post))
+            {
+                @Html.HiddenFor(m => m.Id)
+                @Html.Hidden("NewStatus", OwnerApplicationStatus.Approved)
+
+                <button type="submit" class="btn btn-success float-end mx-1">Accept</button>
+            }
+            @using (Html.BeginForm(FormMethod.Post))
+            {
+                @Html.HiddenFor(m => m.Id)
+                @Html.Hidden("NewStatus", OwnerApplicationStatus.Rejected)
+
+                <button type="submit" class="btn btn-outline-danger float-end mx-1">Decline</button>
+            }
+        </div>
+    </div>
+</div>

@@ -1,4 +1,5 @@
-﻿@using FoodDeliveryNetwork.Data.Models;
+﻿@using FoodDeliveryNetwork.Common;
+@using FoodDeliveryNetwork.Data.Models;
 @inject SignInManager<ApplicationUser> SignInManager
 @{
     var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
@@ -13,5 +14,12 @@
     }
     <li class="nav-item"><a class="nav-link @ManageNavPages.TwoFactorAuthenticationNavClass(ViewContext)" id="two-factor" asp-page="./TwoFactorAuthentication">Two-factor authentication</a></li>
     <li class="nav-item"><a class="nav-link @ManageNavPages.PersonalDataNavClass(ViewContext)" id="personal-data" asp-page="./PersonalData">Personal data</a></li>
-    <li class="nav-item"><a class="nav-link @ManageNavPages.PersonalDataNavClass(ViewContext)" id="owner-application" asp-controller="/OwnerApplication">Owner application</a></li>
+    @if (!(User.IsInRole(AppConstants.RoleNames.OwnerRole) ||
+    User.IsInRole(AppConstants.RoleNames.AdministratorRole) ||
+    User.IsInRole(AppConstants.RoleNames.CourierRole) ||
+    User.IsInRole(AppConstants.RoleNames.DispatcherRole)))
+    {
+        <li class="nav-item"><a class="nav-link id="owner-application" asp-area="" asp-controller="/OwnerApplication">Owner application</a></li>
+    }
 </ul>
+

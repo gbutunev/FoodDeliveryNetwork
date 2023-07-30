@@ -1,0 +1,37 @@
+﻿@using FoodDeliveryNetwork.Data.Models;
+@using FoodDeliveryNetwork.Web.ViewModels.Admin;
+
+@model SingleApplicationViewModel
+
+@if (Model is not null)
+{
+    <div class="@GetCardColor(Model.ApplicationStatus)">
+        <div class="card-header">
+            <h5>@Model.CompanyName</h5>
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Application ID: @Model.Id</h5>
+            <p class="card-text">EIK: @Model.EIK</p>
+            <p class="card-text">Company Name: @Model.CompanyName</p>
+            <p class="card-text">Owner: @Model.OwnerFullName</p>
+            <p class="card-text">Owner EGN: @Model.OwnerEGN</p>
+            <p class="card-text">Headquarters Address: @Model.HeadquartersFullAddress</p>
+            <p class="card-text">Owner Phone: @Model.OwnerPhoneNumber</p>
+            <p class="card-text">Application Status: @Model.ApplicationStatus</p>
+            <p class="card-text">Created On: @Model.CreatedOn.ToString("yyyy-MM-dd HH:mm")</p>
+        </div>
+    </div>
+}
+
+@functions
+{
+    private string GetCardColor(OwnerApplicationStatus applicationStatus)
+    {
+        return applicationStatus switch
+        {
+            OwnerApplicationStatus.Approved => "card text-white bg-success mb-3",
+            OwnerApplicationStatus.Rejected => "card text-white bg-danger mb-3",
+            _ => "card bg-light mb-3",
+        };
+    }
+}

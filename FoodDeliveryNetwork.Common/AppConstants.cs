@@ -8,8 +8,8 @@
         {
             public const string AdministratorRole = "Administrator";
             public const string OwnerRole = "Owner";
-            public const string CourierName = "Courier";
-            public const string DispatcherName = "Dispatcher";
+            public const string CourierRole = "Courier";
+            public const string DispatcherRole = "Dispatcher";
         }
     }
 }

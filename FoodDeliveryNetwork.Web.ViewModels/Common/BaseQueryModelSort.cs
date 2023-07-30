@@ -1,4 +1,4 @@
-﻿namespace FoodDeliveryNetwork.Services.Data.SearchHelpers
+﻿namespace FoodDeliveryNetwork.Web.ViewModels.Common
 {
     public enum BaseQueryModelSort
     {
