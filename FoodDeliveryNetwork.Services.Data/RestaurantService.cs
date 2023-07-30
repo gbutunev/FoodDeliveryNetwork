@@ -121,9 +121,15 @@ namespace FoodDeliveryNetwork.Services.Data
 
         public async Task<int> EditRestaurantAsync(string id, RestaurantFormModel model)
         {
-            if (model.OwnerId is null || id is null || id == Guid.Empty.ToString()) return -1;
+            if (id is null || id == Guid.Empty.ToString()) return -1;
+            var restaurant = await dbContext
+                .Restaurants
+                .Include(x => x.Owner)
+                .FirstOrDefaultAsync(x => x.Id.ToString() == id);
 
-            var owner = await userManager.FindByIdAsync(model.OwnerId);
+            if (restaurant is null) return -1;
+
+            var owner = await userManager.FindByIdAsync(restaurant.Owner.Id.ToString());
             if (owner is null) return -1;
 
             bool isOwner = await userManager.IsInRoleAsync(owner, AppConstants.RoleNames.OwnerRole);
@@ -136,7 +142,6 @@ namespace FoodDeliveryNetwork.Services.Data
 
             try
             {
-                var restaurant = await dbContext.Restaurants.FindAsync(Guid.Parse(id));
 
                 restaurant.Name = model.Name;
                 restaurant.Address = model.Address;
