@@ -69,5 +69,22 @@ namespace FoodDeliveryNetwork.Web.Controllers
             }
 
         }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteRestaurant(Guid restaurantId)
+        {
+            //TODO: Add error/success messages
+
+            var userId = User.GetId();
+
+            bool userIsOwner = await restaurantService.RestaurantIsOwnedByUserAsync(restaurantId.ToString(), userId);
+
+            if (userIsOwner)
+            {
+                int r = await restaurantService.DeleteRestaurantAsync(restaurantId);
+            }            
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

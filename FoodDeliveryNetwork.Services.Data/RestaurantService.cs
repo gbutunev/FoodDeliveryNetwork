@@ -76,5 +76,30 @@ namespace FoodDeliveryNetwork.Services.Data
                 return 0;
             }
         }
+
+        public async Task<bool> RestaurantIsOwnedByUserAsync(string restaurantId, string userId)
+        {
+            return await dbContext
+                .Restaurants
+                .AnyAsync(x => x.Id.ToString() == restaurantId && x.Owner.Id.ToString() == userId);
+        }
+
+        public async Task<int> DeleteRestaurantAsync(Guid restaurantId)
+        {
+            var restaurant = await dbContext.Restaurants.FindAsync(restaurantId);
+            if (restaurant is null) return -1;
+
+            try
+            {
+                dbContext.Restaurants.Remove(restaurant);
+                await dbContext.SaveChangesAsync();
+
+                return 1;
+            }
+            catch
+            {
+                return 0;
+            }
+        }
     }
 }

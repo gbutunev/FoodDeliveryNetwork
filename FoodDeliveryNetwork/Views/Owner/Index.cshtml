@@ -18,8 +18,12 @@
                 <p class="card-text">Dispatchers: @r.TotalDispatchers</p>
                 <p class="card-text">Couriers: @r.TotalCouriers</p>
                 <div class="d-flex">
-                    <a href="#" class="btn btn-danger ms-auto">Delete</a>
-                    <a href="#" class="ms-1 btn btn-warning">Edit</a>
+                    <form action="@Url.Action("DeleteRestaurant", "Owner")" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="restaurantId" value="@r.Id" />
+                        <button type="submit" class="btn btn-danger ms-auto">Delete</button>
+                    </form>
+                    <a href="/owner/editrestaurant/@r.Id" class="ms-1 btn btn-warning">Edit</a>
                     <a href="#" class="ms-1 btn btn-info">Manage dishes</a>
                     <a href="#" class="ms-1 btn btn-info">Manage dispatchers</a>
                     <a href="#" class="ms-1 btn btn-info">Manage couriers</a>
