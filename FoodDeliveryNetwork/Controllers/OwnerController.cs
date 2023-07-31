@@ -10,10 +10,11 @@ namespace FoodDeliveryNetwork.Web.Controllers
     public class OwnerController : Controller
     {
         private readonly IRestaurantService restaurantService;
-
-        public OwnerController(IRestaurantService restaurantService)
+        private readonly IDispatcherService dispatcherService;
+        public OwnerController(IRestaurantService restaurantService, IDispatcherService dispatcherService)
         {
             this.restaurantService = restaurantService;
+            this.dispatcherService = dispatcherService;
         }
 
         //MyRestaurants
@@ -136,6 +137,105 @@ namespace FoodDeliveryNetwork.Web.Controllers
                         throw new Exception("Unknown error!");
                 }
             }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ManageDispatchers(string id)
+        {
+            bool isOwner = await restaurantService.RestaurantIsOwnedByUserAsync(id, User.GetId());
+            if (!isOwner) return RedirectToAction(nameof(Index));
+
+            List<StaffViewModel> staff = (await dispatcherService.GetDispatchersByRestaurantIdAsync(id)).ToList();
+
+            ManageDispatchersViewModel model = new ManageDispatchersViewModel
+            {
+                Dispatchers = staff
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ManageDispatchers(string id, ManageDispatchersViewModel model)
+        {
+            bool isOwner = await restaurantService.RestaurantIsOwnedByUserAsync(id, User.GetId());
+            if (!isOwner) return RedirectToAction(nameof(Index));
+
+            bool invalidModelState = !ModelState.IsValid;
+            bool noChanges = string.IsNullOrEmpty(model.NewDispatcherEmail) && model.DispatcherIdToBeDeleted == Guid.Empty;
+
+            if (invalidModelState || noChanges)
+            {
+                if (noChanges)
+                {
+                    ModelState.AddModelError("", "Please enter an email address.");
+                }
+
+                //same as GET
+                if (!isOwner) return RedirectToAction(nameof(Index));
+
+                model.Dispatchers = (await dispatcherService.GetDispatchersByRestaurantIdAsync(id)).ToList();
+
+                return View(model);
+            }
+
+            if (!string.IsNullOrWhiteSpace(model.NewDispatcherEmail))
+            {
+                int r = await dispatcherService.AddDispatcherToRestaurantAsync(id, model.NewDispatcherEmail);
+
+                switch (r)
+                {
+                    case 1:
+                        //TODO: Add success message
+                        break;
+                    case 0:
+                    case -1:
+                        ModelState.AddModelError("", "Something went wrong!");
+                        break;
+                    case -2:
+                        ModelState.AddModelError("", "User does with this email does not exist!");
+                        break;
+                    case -3:
+                        ModelState.AddModelError("", "User is already in a role!");
+                        break;
+                    case -4:
+                        ModelState.AddModelError("", "User is already a dispatcher!");
+                        break;
+                    default:
+                        throw new NotImplementedException("Unknown error!");
+                }
+
+                model.Dispatchers = (await dispatcherService.GetDispatchersByRestaurantIdAsync(id)).ToList();
+                return View(model);
+            }
+
+            if (model.DispatcherIdToBeDeleted != Guid.Empty)
+            {
+                int r = await dispatcherService.RemoveDispatcherFromRestaurantAsync(id, model.DispatcherIdToBeDeleted);
+
+                switch (r)
+                {
+                    case 1:
+                        //TODO: Add success message
+                        break;
+                    case 0:
+                    case -1:
+                        ModelState.AddModelError("", "Something went wrong!");
+                        break;
+                    case -2:
+                        ModelState.AddModelError("", "User does not exist!");
+                        break;
+                    case -3:
+                        ModelState.AddModelError("", "User is not a dispatcher!");
+                        break;
+                    default:
+                        throw new NotImplementedException("Unknown error!");
+                }
+            }
+
+            //same as GET
+            model.Dispatchers = (await dispatcherService.GetDispatchersByRestaurantIdAsync(id)).ToList();
+            return View(model);
         }
     }
 }

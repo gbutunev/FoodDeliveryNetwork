@@ -42,9 +42,9 @@ namespace FoodDeliveryNetwork.Web
 
             builder.Services.AddScoped<IOwnerApplicationService, OwnerApplicationService>();
             builder.Services.AddScoped<IRestaurantService, RestaurantService>();
+            builder.Services.AddScoped<IDispatcherService, DispatcherService>();
 
             var app = builder.Build();
-
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

@@ -23,10 +23,10 @@
                         <input type="hidden" name="restaurantId" value="@r.Id" />
                         <button type="submit" class="btn btn-danger ms-auto">Delete</button>
                     </form>
-                    <a href="/owner/editrestaurant/@r.Id" class="ms-1 btn btn-warning">Edit</a>
+                    <a href="/owner/EditRestaurant/@r.Id" class="ms-1 btn btn-warning">Edit</a>
                     <a href="#" class="ms-1 btn btn-info">Manage dishes</a>
-                    <a href="#" class="ms-1 btn btn-info">Manage dispatchers</a>
-                    <a href="#" class="ms-1 btn btn-info">Manage couriers</a>
+                    <a href="/owner/ManageDispatchers/@r.Id" class="ms-1 btn btn-info">Manage dispatchers</a>
+                    <a href="/owner/ManageCouriers/@r.Id" class="ms-1 btn btn-info">Manage couriers</a>
                 </div>
             </div>
         </div>
