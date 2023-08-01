@@ -10,6 +10,7 @@ namespace FoodDeliveryNetwork.Web.Controllers
     public class OwnerController : Controller
     {
         private readonly IRestaurantService restaurantService;
+        private readonly ICourierService courierService;
         private readonly IDispatcherService dispatcherService;
         public OwnerController(IRestaurantService restaurantService, IDispatcherService dispatcherService)
         {
@@ -235,6 +236,102 @@ namespace FoodDeliveryNetwork.Web.Controllers
 
             //same as GET
             model.Dispatchers = (await dispatcherService.GetDispatchersByRestaurantIdAsync(id)).ToList();
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ManageCouriers(string id)
+        {
+            bool isOwner = await restaurantService.RestaurantIsOwnedByUserAsync(id, User.GetId());
+            if (!isOwner) return RedirectToAction(nameof(Index));
+
+            List<StaffViewModel> staff = (await courierService.GetCouriersByRestaurantIdAsync(id)).ToList();
+
+            ManageCouriersViewModel model = new ManageCouriersViewModel
+            {
+                Couriers = staff
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ManageCouriers(string id, ManageCouriersViewModel model)
+        {
+            bool isOwner = await restaurantService.RestaurantIsOwnedByUserAsync(id, User.GetId());
+            if (!isOwner) return RedirectToAction(nameof(Index));
+
+            bool invalidModelState = !ModelState.IsValid;
+            bool noChanges = string.IsNullOrEmpty(model.NewCourierEmail) && model.CourierIdToBeDeleted == Guid.Empty;
+
+            if (invalidModelState || noChanges)
+            {
+                if (noChanges)
+                {
+                    ModelState.AddModelError("", "Please enter an email address.");
+                }
+
+                //same as GET
+                if (!isOwner) return RedirectToAction(nameof(Index));
+
+                model.Couriers = (await courierService.GetCouriersByRestaurantIdAsync(id)).ToList();
+
+                return View(model);
+            }
+
+            if (!string.IsNullOrWhiteSpace(model.NewCourierEmail))
+            {
+                int r = await courierService.AddCourierToRestaurantAsync(id, model.NewCourierEmail);
+
+                switch (r)
+                {
+                    case 1:
+                        //TODO: Add success message
+                        break;
+                    case 0:
+                    case -1:
+                        ModelState.AddModelError("", "Something went wrong!");
+                        break;
+                    case -2:
+                        ModelState.AddModelError("", "User does with this email does not exist!");
+                        break;
+                    case -3:
+                        ModelState.AddModelError("", "User is already in a role!");
+                        break;
+                    default:
+                        throw new NotImplementedException("Unknown error!");
+                }
+
+                model.Couriers = (await courierService.GetCouriersByRestaurantIdAsync(id)).ToList();
+                return View(model);
+            }
+
+            if (model.CourierIdToBeDeleted != Guid.Empty)
+            {
+                int r = await courierService.RemoveCourierFromRestaurantAsync(id, model.CourierIdToBeDeleted);
+
+                switch (r)
+                {
+                    case 1:
+                        //TODO: Add success message
+                        break;
+                    case 0:
+                    case -1:
+                        ModelState.AddModelError("", "Something went wrong!");
+                        break;
+                    case -2:
+                        ModelState.AddModelError("", "User does not exist!");
+                        break;
+                    case -3:
+                        ModelState.AddModelError("", "User is not a courier!");
+                        break;
+                    default:
+                        throw new NotImplementedException("Unknown error!");
+                }
+            }
+
+            //same as GET
+            model.Couriers = (await courierService.GetCouriersByRestaurantIdAsync(id)).ToList();
             return View(model);
         }
     }

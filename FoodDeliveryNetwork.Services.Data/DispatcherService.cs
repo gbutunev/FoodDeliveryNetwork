@@ -78,7 +78,7 @@ namespace FoodDeliveryNetwork.Services.Data
             if (isParsed && restaurantId != Guid.Empty)
             {
                 return await dbContext.DispatcherToRestaurants
-                .Where(d => d.RestaurantId == Guid.Parse(id))
+                .Where(d => d.RestaurantId == restaurantId)
                 .Select(d => new StaffViewModel
                 {
                     UserGuid = d.DispatcherId,

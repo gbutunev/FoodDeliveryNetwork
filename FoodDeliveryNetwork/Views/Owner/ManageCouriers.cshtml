@@ -1,1 +1,55 @@
-﻿
+﻿@using FoodDeliveryNetwork.Web.ViewModels.Owner;
+
+@model ManageCouriersViewModel
+
+<div asp-validation-summary="ModelOnly" class="alert alert-danger mb-3"></div>
+
+@using (Html.BeginForm("ManageCouriers", "Owner", FormMethod.Post))
+{
+    <div class="input-group mb-3">
+        @Html.TextBoxFor(model => model.NewCourierEmail, new { @class = "form-control", @placeholder="New courier's email address"})
+        <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Add</button>
+    </div>
+    @Html.ValidationMessageFor(model => model.NewCourierEmail, "", new { @class = "text-danger" })
+}
+
+@if (Model.Couriers is null || !Model.Couriers.Any())
+{
+    <div class="alert alert-info">The restaurant has no couriers!</div>
+}
+else
+{
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Phone Number</th>
+                <th scope="col">First Name</th>
+                <th scope="col">Last Name</th>
+                <th scope="col">Email</th>
+                <th scope="col">Options</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model.Couriers)
+            {
+                <tr>
+                    <th scope="row">@user.PhoneNumber</th>
+                    <td>@user.FirstName</td>
+                    <td>@user.LastName</td>
+                    <td>@user.Email</td>
+                    <td>
+                        <form action="@Url.Action("ManageDispatchers", "Owner")" method="post">
+                            @Html.AntiForgeryToken()
+                            @Html.Hidden(nameof(Model.CourierIdToBeDeleted), user.UserGuid)
+                            <button type="submit" class="btn btn-outline-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
