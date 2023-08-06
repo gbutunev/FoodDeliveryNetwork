@@ -1,0 +1,40 @@
+﻿@using FoodDeliveryNetwork.Web.ViewModels.Owner;
+
+@model DishViewModel
+
+@*TODO: create an actual good looking card*@
+@*TODO: cleanup route for edit*@
+
+<div class="card">
+    <div class="card-header">
+        @Model.Name
+    </div>
+    <div class="card-body">
+        <div class="row mx-1">
+            <div class="col">
+                <div class="row">
+                    @Model.Description
+                </div>
+                <div class="row">
+                    Price: @Model.Price
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 clearfix">
+            @using (Html.BeginForm("EditDish", "Owner", new { restaurantId = Model.RestaurantId }, FormMethod.Get))
+            {
+                @Html.HiddenFor(m => m.DishId)
+                @Html.HiddenFor(m => m.RestaurantId)
+
+                <button type="submit" class="btn btn-warning float-end mx-1">Edit</button>
+            }
+            @using (Html.BeginForm("DeleteDish", "Owner", FormMethod.Post))
+            {
+                @Html.HiddenFor(m => m.DishId)
+                @Html.HiddenFor(m => m.RestaurantId)
+
+                <button type="submit" class="btn btn-danger float-end mx-1">Delete</button>
+            }
+        </div>
+    </div>
+</div>

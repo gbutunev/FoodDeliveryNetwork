@@ -1,0 +1,44 @@
+﻿@using FoodDeliveryNetwork.Web.ViewModels.Owner;
+
+@model DishViewModel
+
+@using (Html.BeginForm("ЕditDishSubmit", "Owner", FormMethod.Post))
+{
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label" })
+        @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label" })
+        @Html.TextBoxFor(model => model.Description, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Price, htmlAttributes: new { @class = "control-label" })
+        @Html.TextBoxFor(model => model.Price, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.Price, "", new { @class = "text-danger" })
+    </div>
+
+    @*    <div class="form-grup">
+        <label for="formFile" class="form-label">Dish image</label>
+        <input name="Image" class="form-control" type="file" id="formFile" accept=".jpg, .jpeg, .png">
+        <small class="form-text text-muted">Accepts JPG and PNG files under 5MB.</small>
+        @Html.ValidationMessageFor(model => model.Image, "", new { @class = "text-danger" })
+    </div>*@
+
+    @Html.HiddenFor(model => model.DishId)
+    @Html.HiddenFor(model => model.RestaurantId)
+
+    <div class="d-flex mt-2">
+        <input type="submit" value="Edit" class="btn btn-primary ms-auto" />
+    </div>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

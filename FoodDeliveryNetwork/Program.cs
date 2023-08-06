@@ -44,6 +44,7 @@ namespace FoodDeliveryNetwork.Web
             builder.Services.AddScoped<IRestaurantService, RestaurantService>();
             builder.Services.AddScoped<IDispatcherService, DispatcherService>();
             builder.Services.AddScoped<ICourierService, CourierService>();
+            builder.Services.AddScoped<IDishService, DishService>();
 
             var app = builder.Build();
 

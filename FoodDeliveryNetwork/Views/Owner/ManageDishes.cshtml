@@ -1,0 +1,22 @@
+﻿@using FoodDeliveryNetwork.Web.ViewModels.Owner;
+
+@model ManageDishesViewModel
+
+<div class="container">
+    <div class="d-flex mb-3">
+        <a class="btn btn-primary ms-auto" href="/Owner/NewDish/@Model.RestaurantId">New Dish</a>
+    </div>
+
+    @if (Model.Dishes is null || Model.Dishes.Count == 0)
+    {
+        <div class="alert alert-info">
+            Restaurant @Model.RestaurantName doesn't have any dishes yet.
+        </div>
+    }
+    @foreach (var dish in Model.Dishes)
+    {
+        <div class="mb-2">
+            @(await Html.PartialAsync("_ManageDishPartial", dish))
+        </div>
+    }
+</div>

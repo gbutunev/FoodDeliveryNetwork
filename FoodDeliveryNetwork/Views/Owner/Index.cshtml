@@ -2,7 +2,7 @@
 
 @model IEnumerable<RestaurantViewModel>
 
-<div class="d-flex mb-2">
+<div class="d-flex mb-3">
     <a href="/owner/newrestaurant" class="ms-auto btn btn-primary">Add new restaurant</a>
 </div>
 
@@ -23,10 +23,10 @@
                         <input type="hidden" name="restaurantId" value="@r.Id" />
                         <button type="submit" class="btn btn-danger ms-auto">Delete</button>
                     </form>
-                    <a href="/owner/EditRestaurant/@r.Id" class="ms-1 btn btn-warning">Edit</a>
-                    <a href="#" class="ms-1 btn btn-info">Manage dishes</a>
-                    <a href="/owner/ManageDispatchers/@r.Id" class="ms-1 btn btn-info">Manage dispatchers</a>
-                    <a href="/owner/ManageCouriers/@r.Id" class="ms-1 btn btn-info">Manage couriers</a>
+                    <a href="/Owner/EditRestaurant/@r.Id" class="ms-1 btn btn-warning">Edit</a>
+                    <a href="/Owner/ManageDishes/@r.Id" class="ms-1 btn btn-info">Manage dishes</a>
+                    <a href="/Owner/ManageDispatchers/@r.Id" class="ms-1 btn btn-info">Manage dispatchers</a>
+                    <a href="/Owner/ManageCouriers/@r.Id" class="ms-1 btn btn-info">Manage couriers</a>
                 </div>
             </div>
         </div>

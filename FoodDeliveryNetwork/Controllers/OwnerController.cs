@@ -12,10 +12,13 @@ namespace FoodDeliveryNetwork.Web.Controllers
         private readonly IRestaurantService restaurantService;
         private readonly ICourierService courierService;
         private readonly IDispatcherService dispatcherService;
-        public OwnerController(IRestaurantService restaurantService, IDispatcherService dispatcherService)
+        private readonly IDishService dishService;
+        public OwnerController(IRestaurantService restaurantService, IDispatcherService dispatcherService, IDishService dishService, ICourierService courierService)
         {
             this.restaurantService = restaurantService;
             this.dispatcherService = dispatcherService;
+            this.dishService = dishService;
+            this.courierService = courierService;
         }
 
         //MyRestaurants
@@ -333,6 +336,124 @@ namespace FoodDeliveryNetwork.Web.Controllers
             //same as GET
             model.Couriers = (await courierService.GetCouriersByRestaurantIdAsync(id)).ToList();
             return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ManageDishes(string id)
+        {
+            bool isOwner = await restaurantService.RestaurantIsOwnedByUserAsync(id, User.GetId());
+            if (!isOwner) return RedirectToAction(nameof(Index));
+
+            List<DishViewModel> dishes = (await dishService.GetDishesByRestaurantIdAsync(id)).ToList();
+
+            ManageDishesViewModel model = new ManageDishesViewModel
+            {
+                Dishes = dishes,
+                RestaurantId = Guid.Parse(id),
+            };
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> NewDish(string id)
+        {
+            bool isOwner = await restaurantService.RestaurantIsOwnedByUserAsync(id, User.GetId());
+            if (!isOwner) return RedirectToAction(nameof(Index));
+
+            DishViewModel model = new DishViewModel
+            {
+                RestaurantId = Guid.Parse(id)
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> NewDish(string id, DishViewModel model)
+        {
+            bool isOwner = await restaurantService.RestaurantIsOwnedByUserAsync(id, User.GetId());
+            if (!isOwner) return RedirectToAction(nameof(Index));
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            model.RestaurantId = Guid.Parse(id);
+
+            int r = await dishService.AddDishToRestaurantAsync(model);
+
+            switch (r)
+            {
+                case 1:
+                    return RedirectToAction(nameof(ManageDishes), new { id });
+                case 0:
+                    ModelState.AddModelError("", "Something went wrong!");
+                    return View(model);
+                default:
+                    throw new NotImplementedException("Unknown error!");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditDish(DishViewModel model)
+        {
+            bool isOwner = await restaurantService.RestaurantIsOwnedByUserAsync(model.RestaurantId.ToString(), User.GetId());
+            if (!isOwner) return RedirectToAction(nameof(Index));
+
+            var dbDish = await dishService.GetDishByIdAsync(model.DishId);
+            if (dbDish is null || dbDish.RestaurantId != model.RestaurantId)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(dbDish);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ЕditDishSubmit(DishViewModel model)
+        {
+            bool isOwner = await restaurantService.RestaurantIsOwnedByUserAsync(model.RestaurantId.ToString(), User.GetId());
+            if (!isOwner) return RedirectToAction(nameof(Index));
+
+            int r = await dishService.EditDishAsync(model);
+
+            //TODO: success/error messages
+            switch (r)
+            {
+                case -1:
+                    return RedirectToAction(nameof(ManageDishes), new { id = model.RestaurantId });
+                case 0:
+                    ModelState.AddModelError("", "Something went wrong!");
+                    return View(nameof(EditDish), model);
+                case 1:
+                    return RedirectToAction(nameof(ManageDishes), new { id = model.RestaurantId });
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteDish(DishViewModel model)
+        {
+            bool isOwner = await restaurantService.RestaurantIsOwnedByUserAsync(model.RestaurantId.ToString(), User.GetId());
+            if (!isOwner) return RedirectToAction(nameof(Index));
+
+            int r = await dishService.DeleteDishAsync(model);
+
+            //TODO: success/error messages
+            switch (r)
+            {
+                case 1:
+                    return RedirectToAction(nameof(ManageDishes), new { id = model.RestaurantId });
+                case 0:
+                    return RedirectToAction(nameof(ManageDishes), new { id = model.RestaurantId });
+                case -1:
+                    return RedirectToAction(nameof(ManageDishes), new { id = model.RestaurantId });
+                default:
+                    throw new NotImplementedException();
+            }
         }
     }
 }
