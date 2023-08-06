@@ -4,5 +4,7 @@
     {
         Newest,
         Oldest,
+        Name,
+        Address,
     }
 }

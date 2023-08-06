@@ -1,0 +1,14 @@
+﻿@using FoodDeliveryNetwork.Data.Models;
+@using FoodDeliveryNetwork.Web.Extensions;
+@using FoodDeliveryNetwork.Web.Views.Home.Blazor;
+
+@{
+    ViewData["Title"] = "Home Page";
+    string userId = User.GetId();
+}
+@model Restaurant
+
+<base href="~/" />
+<component type="typeof(RestaurantOrderComponent)" render-mode="Server" param-RestaurantId=@Model.Id param-UserId=@userId />
+
+<script src="_framework/blazor.server.js"></script> 

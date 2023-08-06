@@ -1,0 +1,152 @@
+﻿@using System.Net.Http
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.JSInterop
+
+<h3>RestaurantOrderComponent</h3>
+
+@if (currentRestaurant.Dishes is null || currentRestaurant.Dishes.Count == 0)
+{
+    <div class="alert alert-info">This restaurant has got no dishes yet!</div>
+}
+else
+{
+    <div>
+        <button class="btn btn-primary" @onclick=@ShowConfirmOrderPopup disabled=@(currentOrder.OrderItems.Count ==0)>Order</button>
+    </div>
+
+    @foreach (var dish in currentRestaurant.Dishes)
+    {
+        <div class="mb-2">
+            <p>@dish.Name</p>
+            <p>@dish.Description</p>
+            <p>@dish.Price</p>
+
+            <button class="btn btn-primary" @onclick=@(()=>RemoveDish(dish))>remove</button>
+
+            @if (currentOrder.OrderItems.ContainsKey(dish))
+            {
+                <span>
+                    @currentOrder.OrderItems[dish]
+                </span>
+            }
+            else
+            {
+                <span>0</span>
+            }
+
+            <button class="btn btn-primary" @onclick=@(()=>AddDish(dish))>add</button>
+
+        </div>
+    }
+}
+
+@if (showConfirmOrderPopup)
+{
+    <div class="modal" tabindex="-1" role="dialog" style="display: block">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm order</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick="@HideConfirmOrderPopup"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Order for @currentRestaurant.Name</p>
+                    @if (currentOrder.OrderItems.Count != 0)
+                    {
+                        <ul class="list-group w-100">
+                            @{
+                                decimal sum = 0;
+                            }
+                            @foreach (var d in currentOrder.OrderItems)
+                            {
+                                @if (d.Value < 1) continue;
+
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    @d.Key.Name
+                                    <span class="badge bg-primary badge-pill">@d.Value</span>
+                                </li>
+
+                                sum += d.Value * d.Key.Price;
+                            }
+                        </ul>
+                        <p class="mt-3">
+                            Order total: @(
+                    string.Format("{0:0.00}", sum)
+                    )
+                        </p>
+                        <p class="text-muted">Cash on delivery</p>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" @onclick="@ContinueToAddress">Select delvery address</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (showAddressPopup)
+{
+    <EditForm Model=currentOrder OnValidSubmit=ConfirmOrder>
+        <div class="modal" tabindex="-1" role="dialog" style="display: block">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Select address</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick="@HideAddressPopup"></button>
+                    </div>
+                    <div class="modal-body">
+                        <DataAnnotationsValidator />
+
+                        @{
+                            bool hasSavedAddresses = customerAddresses != null && customerAddresses.Count > 0;
+                            addressPopupMode = hasSavedAddresses ? AddressPopupMode.Saved : AddressPopupMode.New;
+                        }
+
+                        <InputRadioGroup @bind-Value="addressPopupMode" class="mb-2">
+                            <InputRadio Value="@AddressPopupMode.Saved" disabled=@(!hasSavedAddresses) />Your adresses
+                            <InputRadio Value="@AddressPopupMode.New" />New address
+                        </InputRadioGroup>
+
+                        @switch (addressPopupMode)
+                        {
+                            case AddressPopupMode.New:
+                                <InputText class="form-control" @bind-Value=currentOrder.Address placeholder="Full address"></InputText>
+                                break;
+                            case AddressPopupMode.Saved:
+                                @if (hasSavedAddresses)
+                                {
+                                    <InputSelect class="form-control mb-2" @bind-Value=currentOrder.Address>
+                                        @foreach (var a in customerAddresses)
+                                        {
+                                            <option value="@a">@a</option>
+                                        }
+                                    </InputSelect>
+                                }
+                                else
+                                {
+                                    <div class="alert alert-info">
+                                        You don't have any saved addresses yet!
+                                    </div>
+                                }
+                                break;
+                            default:
+                                <div class="alert alert-danger">
+                                    Unexpected input!
+                                </div>
+                                break;
+                        }
+                        <ValidationSummary />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Confirm</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </EditForm>
+}

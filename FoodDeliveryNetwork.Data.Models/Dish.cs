@@ -23,6 +23,7 @@ namespace FoodDeliveryNetwork.Data.Models
         [ForeignKey(nameof(RestaurantId))]
         public Restaurant Restaurant { get; set; }
 
+        //TODO: Custom model binder
         [Required]
         [Column(TypeName = "decimal(7, 2)")]
         public decimal Price { get; set; }

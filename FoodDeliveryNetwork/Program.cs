@@ -40,11 +40,18 @@ namespace FoodDeliveryNetwork.Web
                 options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
             });
 
+            builder.Services.AddServerSideBlazor().AddCircuitOptions(o =>
+            {
+                o.DetailedErrors = builder.Environment.IsDevelopment();
+            });
+
             builder.Services.AddScoped<IOwnerApplicationService, OwnerApplicationService>();
             builder.Services.AddScoped<IRestaurantService, RestaurantService>();
             builder.Services.AddScoped<IDispatcherService, DispatcherService>();
             builder.Services.AddScoped<ICourierService, CourierService>();
             builder.Services.AddScoped<IDishService, DishService>();
+            builder.Services.AddScoped<IAddressService, AddressService>();
+            builder.Services.AddScoped<IOrderService, OrderService>();
 
             var app = builder.Build();
 
@@ -83,6 +90,7 @@ namespace FoodDeliveryNetwork.Web
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+                endpoints.MapBlazorHub();
             });
 
             app.MapRazorPages();

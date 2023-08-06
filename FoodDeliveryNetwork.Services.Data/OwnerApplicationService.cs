@@ -165,6 +165,12 @@ namespace FoodDeliveryNetwork.Services.Data
                 case BaseQueryModelSort.Oldest:
                     pendingApplicationsQuery = pendingApplicationsQuery.OrderBy(x => x.CreatedOn);
                     break;
+                case BaseQueryModelSort.Name:
+                    pendingApplicationsQuery = pendingApplicationsQuery.OrderBy(x => x.OwnerFullName);
+                    break;
+                case BaseQueryModelSort.Address:
+                    pendingApplicationsQuery = pendingApplicationsQuery.OrderBy(x => x.HeadquartersFullAddress);
+                    break;
                 default:
                     pendingApplicationsQuery = pendingApplicationsQuery.OrderByDescending(x => x.CreatedOn);
                     break;

@@ -2,6 +2,7 @@
 using FoodDeliveryNetwork.Data;
 using FoodDeliveryNetwork.Data.Models;
 using FoodDeliveryNetwork.Services.Data.Contracts;
+using FoodDeliveryNetwork.Web.ViewModels.Home;
 using FoodDeliveryNetwork.Web.ViewModels.Owner;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -158,6 +159,96 @@ namespace FoodDeliveryNetwork.Services.Data
             {
                 return 0;
             }
+        }
+
+        public async Task<AllRestaurantsViewModel> GetAllRestaurantsAsync(AllRestaurantsViewModel model)
+        {
+            if (model is null || model.BaseQueryModel is null)
+            {
+                model.Restaurants = await dbContext
+                    .Restaurants
+                    .OrderBy(x => x.Name)
+                    .Select(x => new CustomerRestaurantViewModel
+                    {
+                        Id = x.Id,
+                        Name = x.Name,
+                        Address = x.Address,
+                        Handle = x.Handle,
+                        Description = x.Description,
+                        PhoneNumber = x.PhoneNumber,
+                    })
+                    .ToArrayAsync();
+
+                model.TotalRestaurants = model.Restaurants.Count();
+
+                return model;
+            }
+
+            var query = model.BaseQueryModel;
+
+            var restaurants = dbContext
+                .Restaurants
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(query.SearchTerm))
+            {
+                var wildcard = $"%{query.SearchTerm.ToLower()}%";
+
+                restaurants = restaurants.Where(x =>
+                    EF.Functions.Like(x.Name.ToLower(), wildcard) ||
+                    EF.Functions.Like(x.Address.ToLower(), wildcard) ||
+                    EF.Functions.Like(x.PhoneNumber.ToLower(), wildcard));
+            }
+
+            switch (query.SortBy)
+            {
+                case Web.ViewModels.Common.BaseQueryModelSort.Name:
+                    restaurants = restaurants.OrderBy(x => x.Name);
+                    break;
+                case Web.ViewModels.Common.BaseQueryModelSort.Address:
+                    restaurants = restaurants.OrderBy(x => x.Address);
+                    break;
+                default:
+                    restaurants = restaurants.OrderBy(x => x.Name);
+                    break;
+            }
+
+            IEnumerable<CustomerRestaurantViewModel> restaurantsToReturn = await restaurants
+                .Skip((query.Page - 1) * query.PageSize)
+                .Take(query.PageSize)
+                .Select(x => new CustomerRestaurantViewModel
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Address = x.Address,
+                    Handle = x.Handle,
+                    Description = x.Description,
+                    PhoneNumber = x.PhoneNumber,
+                })
+                .ToArrayAsync();
+
+            int totalRestaurants = restaurantsToReturn.Count();
+
+            model.Restaurants = restaurantsToReturn;
+            model.TotalRestaurants = totalRestaurants;
+
+            return model;
+        }
+
+        public async Task<Restaurant> GetRestaurantByHandleAsync(string id)
+        {
+            return await dbContext
+                .Restaurants
+                .Include(x => x.Dishes)
+                .FirstOrDefaultAsync(x => x.Handle == id);
+        }
+
+        public async Task<Restaurant> GetRestaurantByIdAsync(string id)
+        {
+            return await dbContext
+                .Restaurants
+                .Include(x => x.Dishes)
+                .FirstOrDefaultAsync(x => x.Id.ToString() == id);
         }
     }
 }

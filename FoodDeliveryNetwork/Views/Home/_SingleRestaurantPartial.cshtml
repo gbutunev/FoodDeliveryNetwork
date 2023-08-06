@@ -1,0 +1,18 @@
+﻿@using FoodDeliveryNetwork.Web.ViewModels.Home;
+
+@model CustomerRestaurantViewModel
+
+<div class="card w-100" style="width: 18rem;">
+  <img src="..." class="card-img-top" alt="..."> 
+  <div class="card-body">
+    <h5 class="card-title">@Model.Name</h5>
+        <p class="card-text" style="word-break: break-word;">@(Model.Description.Length <= 200 ? Model.Description : Model.Description.Substring(0, 197) + "...")</p>
+  </div>
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item">@Model.Address</li>
+    <li class="list-group-item">@Model.PhoneNumber</li>
+  </ul>
+  <div class="card-body">
+    <a href="/Home/Restaurant/@Model.Handle" class="card-link">Order</a>
+  </div>
+</div>

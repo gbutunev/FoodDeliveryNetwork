@@ -1,7 +1,4 @@
-﻿using FoodDeliveryNetwork.Common;
-using FoodDeliveryNetwork.Data.Models;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using FoodDeliveryNetwork.Data.Models;
 
 namespace FoodDeliveryNetwork.Web.ViewModels.Admin
 {
