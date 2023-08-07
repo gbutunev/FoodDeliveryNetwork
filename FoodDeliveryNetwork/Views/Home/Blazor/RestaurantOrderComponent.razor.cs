@@ -31,7 +31,7 @@ namespace FoodDeliveryNetwork.Web.Views.Home.Blazor
 
         private AddressPopupMode addressPopupMode = AddressPopupMode.Saved;
 
-        private BlazorOrderViewModel currentOrder = new BlazorOrderViewModel();
+        private CustomerBlazorOrderViewModel currentOrder = new CustomerBlazorOrderViewModel();
 
         protected override async Task OnParametersSetAsync()
         {

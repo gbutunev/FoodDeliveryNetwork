@@ -1,14 +1,14 @@
 ﻿@using FoodDeliveryNetwork.Web.ViewModels.Common;
 @using FoodDeliveryNetwork.Web.ViewModels.Home;
 
-@model CustomerAllRestaurantsViewModel
+@model CustomerAllOrdersViewModel
 
 @{
-    ViewBag.Title = "Home";
+    ViewBag.Title = "All Orders";
 }
 
 @*Search bar*@
-@using (Html.BeginForm("Index", "Home", FormMethod.Get, new { @class = "row gy-2 gx-3 align-items-center mb-5" }))
+@using (Html.BeginForm("AllOrders", "Home", FormMethod.Get, new { @class = "row gy-2 gx-3 align-items-center mb-5" }))
 {
     <div class="col-auto">
         @Html.TextBoxFor(m => m.BaseQueryModel.SearchTerm, new { @class = "form-control", placeholder = "Search" })
@@ -16,12 +16,7 @@
 
     <div class="col-auto">
         @Html.Label("Sort by:", "Sort by:", new { @class = "visually-hidden", @for = "p1"})
-
-        @{
-            var enums = new[] { BaseQueryModelSort.Name, BaseQueryModelSort.Address };
-        }
-
-        @Html.DropDownListFor(m => m.BaseQueryModel.SortBy, new SelectList(enums), new { @class = "form-select", @id = "p1" })
+        @Html.DropDownListFor(m => m.BaseQueryModel.SortBy, new SelectList(new[] { BaseQueryModelSort.Newest, BaseQueryModelSort.Oldest}), new { @class = "form-select", @id = "p1" })
     </div>
 
     <div class="col-auto">
@@ -35,10 +30,10 @@
     </div>
 }
 
-@if (Model.TotalRestaurants == 0)
+@if (Model.TotalOrders == 0)
 {
     <div class="alert alert-info" role="alert">
-        No restaurants!
+        No recent orders!
     </div>
 }
 else
@@ -49,12 +44,12 @@ else
         previousPage = 1;
     }
 
-    int maxPage = (int)Math.Ceiling((double)Model.TotalRestaurants /
+    int maxPage = (int)Math.Ceiling((double)Model.TotalOrders /
         Model.BaseQueryModel.PageSize);
 
-    @foreach (var restaurant in Model.Restaurants)
+    @foreach (var application in Model.Orders)
     {
-        @await Html.PartialAsync("_SingleRestaurantPartial", restaurant)
+        @await Html.PartialAsync("_CustomerBasicOrderPartial", application)
     }
 
     <nav aria-label="Page navigation">

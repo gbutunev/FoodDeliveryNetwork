@@ -4,6 +4,7 @@
     {
         Pending,
         Cooking,
+        ReadyForPickup,
         OnTheWay,
         Delivered,
         CancelledByCustomer,

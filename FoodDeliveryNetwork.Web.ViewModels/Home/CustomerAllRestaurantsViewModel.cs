@@ -2,7 +2,7 @@
 
 namespace FoodDeliveryNetwork.Web.ViewModels.Home
 {
-    public class AllRestaurantsViewModel
+    public class CustomerAllRestaurantsViewModel
     {
         public BaseQueryModel BaseQueryModel { get; set; } = new BaseQueryModel();
         public int TotalRestaurants { get; set; }

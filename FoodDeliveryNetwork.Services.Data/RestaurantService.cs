@@ -161,7 +161,7 @@ namespace FoodDeliveryNetwork.Services.Data
             }
         }
 
-        public async Task<AllRestaurantsViewModel> GetAllRestaurantsAsync(AllRestaurantsViewModel model)
+        public async Task<CustomerAllRestaurantsViewModel> GetAllRestaurantsAsync(CustomerAllRestaurantsViewModel model)
         {
             if (model is null || model.BaseQueryModel is null)
             {

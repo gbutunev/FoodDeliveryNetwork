@@ -1,7 +1,4 @@
-﻿using FoodDeliveryNetwork.Common;
-using System.ComponentModel.DataAnnotations;
-
-namespace FoodDeliveryNetwork.Web.ViewModels.Home
+﻿namespace FoodDeliveryNetwork.Web.ViewModels.Home
 {
     public class AddressViewModel
     {

@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoodDeliveryNetwork.Web.ViewModels.Home
 {
-    public class BlazorOrderViewModel
+    public class CustomerBlazorOrderViewModel
     {
         public Guid RestaurantId { get; set; }
         public string UserId { get; set; }

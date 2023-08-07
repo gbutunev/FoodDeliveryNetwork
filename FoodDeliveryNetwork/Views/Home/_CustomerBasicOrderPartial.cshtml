@@ -1,0 +1,31 @@
+﻿@using FoodDeliveryNetwork.Web.ViewModels.Home;
+
+@model CustomerBasicOrderViewModel
+
+<div class="card" style="width: 18rem;">
+    <div class="card-header">
+        Order from <a href="/Home/Restaurant/@Model.RestaurantHandle">@Model.RestaurantName</a>
+    </div>
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item">Created on: @Model.CreatedOn</li>
+        <li class="list-group-item">@Model.RestaurantPhoneNumber</li>
+        <li class="list-group-item">@Model.OrderStatus</li>
+        <li class="list-group-item">@Model.Address</li>
+        <li class="list-group-item">@Model.TotalItemsCount</li>
+        <li class="list-group-item">@Model.TotalPrice</li>
+        <li class="list-group-item">
+            @if (Model.OrderStatus == FoodDeliveryNetwork.Data.Models.OrderStatus.Pending)
+            {
+                @using (Html.BeginForm("CancelOrder", "Home", FormMethod.Post))
+                {
+                    @Html.HiddenFor(m => m.Id)
+                    <button type="submit" class="btn btn-danger">Cancel order</button>
+                }
+            }
+            else
+            {
+                <button class="btn btn-danger" disabled>Cancel order</button>
+            }
+        </li>
+    </ul>
+</div>
