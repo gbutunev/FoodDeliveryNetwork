@@ -1,0 +1,49 @@
+﻿@using FoodDeliveryNetwork.Web.ViewModels.Home;
+
+@model AddressPageViewModel
+
+<div asp-validation-summary="ModelOnly" class="alert alert-danger mb-3"></div>
+
+@using (Html.BeginForm("MyAddresses", "Home", FormMethod.Post))
+{
+    <div class="input-group mb-3">
+        @Html.TextBoxFor(model => model.NewAddress, new { @class = "form-control", @placeholder="New address"})
+        <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Add</button>
+    </div>
+    @Html.ValidationMessageFor(model => model.NewAddress, "", new { @class = "text-danger" })
+}
+
+@if (Model.Addresses is null || !Model.Addresses.Any())
+{
+    <div class="alert alert-info">You've got no addresses saved yet!</div>
+}
+else
+{
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Address</th>
+                <th scope="col">Options</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var addr in Model.Addresses)
+            {
+                <tr>
+                    <th scope="row">@addr.Address</th>
+                    <td>
+                        <form action="@Url.Action("MyAddresses", "Home")" method="post">
+                            @Html.AntiForgeryToken()
+                            @Html.Hidden(nameof(Model.AddressIdToBeDeleted), addr.Id)
+                            <button type="submit" class="btn btn-outline-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

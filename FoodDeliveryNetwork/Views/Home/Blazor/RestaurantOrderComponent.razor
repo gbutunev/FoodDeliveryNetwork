@@ -123,7 +123,7 @@ else
                                     <InputSelect class="form-control mb-2" @bind-Value=currentOrder.Address>
                                         @foreach (var a in customerAddresses)
                                         {
-                                            <option value="@a">@a</option>
+                                            <option value="@a.Address">@a.Address</option>
                                         }
                                     </InputSelect>
                                 }

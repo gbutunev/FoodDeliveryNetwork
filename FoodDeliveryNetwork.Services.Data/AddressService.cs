@@ -24,6 +24,21 @@ namespace FoodDeliveryNetwork.Services.Data
                 .AnyAsync(ca => ca.CustomerId.ToString() == userId && ca.Address == address);
         }
 
+        public async Task<int> CreateAddress(CustomerAddress customerAddress)
+        {
+            try
+            {
+                await dbContext.CustomerAddresses.AddAsync(customerAddress);
+                await dbContext.SaveChangesAsync();
+
+                return 1;
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
+        }
+
         public async Task<int> CreateAddressAsync(string userId, string address)
         {
             bool isValidGuid = Guid.TryParse(userId, out Guid userGuid);
@@ -51,6 +66,24 @@ namespace FoodDeliveryNetwork.Services.Data
             }
         }
 
+        public async Task<int> DeleteAddressById(int id)
+        {
+            var addr = await dbContext.CustomerAddresses.FindAsync(id);
+            if (addr is null) return -1;
+
+            try
+            {
+                dbContext.CustomerAddresses.Remove(addr);
+                await dbContext.SaveChangesAsync();
+
+                return 1;
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
+        }
+
         public async Task<IEnumerable<AddressViewModel>> GetAddressesByUserId(string userId)
         {
             return await dbContext.CustomerAddresses
@@ -63,6 +96,10 @@ namespace FoodDeliveryNetwork.Services.Data
                 .ToArrayAsync();
         }
 
-
+        public async Task<bool> UserOwnsAddress(string userId, int addressId)
+        {
+            return await dbContext.CustomerAddresses
+                .AnyAsync(ca => ca.CustomerId.ToString() == userId && ca.Id == addressId);
+        }
     }
 }

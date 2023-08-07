@@ -187,6 +187,43 @@ namespace FoodDeliveryNetwork.Services.Data
                 return 0;
             }
         }
+
+        public async Task<bool> UserOwnsOrder(string userId, string orderId)
+        {
+            return await dbContext.Orders.AnyAsync(x => x.Id.ToString() == orderId && x.CustomerId.ToString() == userId);
+        }
+
+        public async Task<CustomerDetailedOrderViewModel> GetOrderById(string id)
+        {
+            if (!Guid.TryParse(id, out Guid orderGuid)) return null;
+
+            var order = await dbContext.Orders
+                .Include(x => x.Restaurant)
+                .FirstOrDefaultAsync(x => x.Id == orderGuid);
+
+            if (order is null) return null;
+
+            CustomerDetailedOrderViewModel result = new CustomerDetailedOrderViewModel()
+            {
+                Id = order.Id,
+                Address = order.Address,
+                CreatedOn = order.CreatedOn,
+                OrderStatus = order.OrderStatus,
+                RestaurantName = order.Restaurant.Name,
+                RestaurantPhoneNumber = order.Restaurant.PhoneNumber,
+                RestaurantHandle = order.Restaurant.Handle,
+                TotalPrice = order.TotalPrice,
+                RestaurantAddress = order.Restaurant.Address,
+                Dishes = order.Dishes.Select(x => new CustomerOrderDishViewModel
+                {
+                    DishName = x.DishName,
+                    UnitPrice = x.UnitPrice,
+                    Quantity = x.Quantity,
+                }).ToArray(),
+            };
+
+            return result;
+        }
     }
 }
 
