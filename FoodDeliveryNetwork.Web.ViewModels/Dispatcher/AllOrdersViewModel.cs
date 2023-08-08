@@ -2,10 +2,10 @@
 
 namespace FoodDeliveryNetwork.Web.ViewModels.Dispatcher
 {
-    public class AllActiveOrdersViewModel
+    public class AllOrdersViewModel
     {
         public BaseQueryModel BaseQueryModel { get; set; } = new();
         public int TotalOrders { get; set; }
-        public IEnumerable<SingleActiveOrderViewModel> Orders { get; set; } = new HashSet<SingleActiveOrderViewModel>();
+        public IEnumerable<SingleOrderViewModel> Orders { get; set; } = new HashSet<SingleOrderViewModel>();
     }
 }

@@ -8,7 +8,8 @@ namespace FoodDeliveryNetwork.Services.Data.Contracts
     {
         Task<int> ChangeOrderStatus(Guid id, OrderStatus cancelledByCustomer);
         Task<int> CreateOrder(Order order);
-        Task<AllActiveOrdersViewModel> GetAllActiveOrdersByRestaurantId(Guid restaurantId, AllActiveOrdersViewModel model);
+        Task<AllOrdersViewModel> GetAllActiveOrdersByRestaurantId(Guid restaurantId, AllOrdersViewModel model);
+        Task<AllOrdersViewModel> GetAllArchivedOrdersByRestaurantId(Guid currentRestaurant, AllOrdersViewModel model);
         Task<CustomerDetailedOrderViewModel> GetOrderById(string id);
         Task<CustomerAllOrdersViewModel> GetOrdersByCustomerId(CustomerAllOrdersViewModel model, string userId, int? hoursPrior = null);
         Task<bool> OrderCanBeAccessedByDispatcher(Guid orderId, string userId);

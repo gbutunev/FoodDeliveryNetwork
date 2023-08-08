@@ -18,12 +18,12 @@ namespace FoodDeliveryNetwork.Web.Areas.Staff.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index([FromQuery] AllActiveOrdersViewModel model)
+        public async Task<IActionResult> Index([FromQuery] AllOrdersViewModel model)
         {
             Guid currentRestaurant = await dispatcherService.GetRestaurantIdByDispatcherId(User.GetId());
             if (currentRestaurant == Guid.Empty)
                 //return RedirectToAction("Index", "Home", new { area = "" }); //not sure for now
-                return View(new AllActiveOrdersViewModel());
+                return View(new AllOrdersViewModel());
 
             model = await orderService.GetAllActiveOrdersByRestaurantId(currentRestaurant, model);
 
@@ -65,9 +65,16 @@ namespace FoodDeliveryNetwork.Web.Areas.Staff.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Archived()
+        public async Task<IActionResult> Archived([FromQuery] AllOrdersViewModel model)
         {
-            return View();
+            Guid currentRestaurant = await dispatcherService.GetRestaurantIdByDispatcherId(User.GetId());
+            if (currentRestaurant == Guid.Empty)
+                //return RedirectToAction("Index", "Home", new { area = "" }); //not sure for now
+                return View(new AllOrdersViewModel());
+
+            model = await orderService.GetAllArchivedOrdersByRestaurantId(currentRestaurant, model);
+
+            return View(model);
         }
     }
 }

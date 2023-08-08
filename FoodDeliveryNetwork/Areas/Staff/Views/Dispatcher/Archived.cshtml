@@ -4,11 +4,11 @@
 @model AllOrdersViewModel
 
 @{
-    ViewBag.Title = "Àctive orders";
+    ViewBag.Title = "Archived orders";
 }
 
 @*Search bar*@
-@using (Html.BeginForm("Index", "Dispatcher", FormMethod.Get, new { @class = "row gy-2 gx-3 align-items-center mb-5" }))
+@using (Html.BeginForm("Archived", "Dispatcher", FormMethod.Get, new { @class = "row gy-2 gx-3 align-items-center mb-5" }))
 {
     <div class="col-auto">
         @Html.TextBoxFor(m => m.BaseQueryModel.SearchTerm, new { @class = "form-control", placeholder = "Search" })
@@ -30,10 +30,10 @@
     </div>
 }
 
-@if (Model.TotalOrders == 0)
+@if (Model is null || Model.TotalOrders == 0)
 {
     <div class="alert alert-info" role="alert">
-        No active orders!
+        No past orders!
     </div>
 }
 else
@@ -49,13 +49,13 @@ else
 
     @foreach (var order in Model.Orders)
     {
-        @await Html.PartialAsync("_ActiveOrderPartial", order)
+        @await Html.PartialAsync("_ArchivedOrderPartial", order)
     }
 
     <nav aria-label="Page navigation">
         <ul class="pagination justify-content-center">
             <li class="page-item @((Model.BaseQueryModel.Page == 1) ? "disabled" : "")">
-                <a class="page-link" href="@Url.Action("Index", new { page = previousPage, Model.BaseQueryModel.SortBy, Model.BaseQueryModel.PageSize, Model.BaseQueryModel.SearchTerm })" aria-label="Previous">
+                <a class="page-link" href="@Url.Action("Archived", new { page = previousPage, Model.BaseQueryModel.SortBy, Model.BaseQueryModel.PageSize, Model.BaseQueryModel.SearchTerm })" aria-label="Previous">
                     <span aria-hidden="true">&laquo;</span>
                 </a>
             </li>
@@ -63,7 +63,7 @@ else
                 <a class="page-link" href="#" tabindex="-1">Page @Model.BaseQueryModel.Page</a>
             </li>
             <li class="page-item @((Model.BaseQueryModel.Page == maxPage) ? "disabled" : "")">
-                <a class="page-link" href="@Url.Action("Index", new { page = Model.BaseQueryModel.Page + 1, Model.BaseQueryModel.SortBy, Model.BaseQueryModel.PageSize, Model.BaseQueryModel.SearchTerm })" aria-label="Next">
+                <a class="page-link" href="@Url.Action("Archived", new { page = Model.BaseQueryModel.Page + 1, Model.BaseQueryModel.SortBy, Model.BaseQueryModel.PageSize, Model.BaseQueryModel.SearchTerm })" aria-label="Next">
                     <span aria-hidden="true">&raquo;</span>
                 </a>
             </li>

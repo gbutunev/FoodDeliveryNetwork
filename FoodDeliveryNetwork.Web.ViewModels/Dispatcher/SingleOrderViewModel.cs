@@ -2,7 +2,7 @@
 
 namespace FoodDeliveryNetwork.Web.ViewModels.Dispatcher
 {
-    public class SingleActiveOrderViewModel
+    public class SingleOrderViewModel
     {
         public Guid Id { get; set; }
         public string CustomerUsername { get; set; }
