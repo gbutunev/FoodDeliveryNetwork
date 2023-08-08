@@ -2,9 +2,15 @@
 
 namespace FoodDeliveryNetwork.Web.Areas.Staff.Controllers
 {
+    [Area("Staff")]
     public class CourierController : Controller
     {
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
+        {
+            return View();
+        }
+
+        public async Task<IActionResult> Archived()
         {
             return View();
         }

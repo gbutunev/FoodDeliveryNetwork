@@ -113,7 +113,7 @@ namespace FoodDeliveryNetwork.Services.Data
             try
             {
                 await userManager.RemoveFromRoleAsync(dispatcher, AppConstants.RoleNames.DispatcherRole);
-                               
+
                 DispatcherToRestaurant toDelete = await dbContext.DispatcherToRestaurants.FirstOrDefaultAsync(d => d.DispatcherId == dispatcherIdToBeDeleted && d.RestaurantId.ToString() == id);
                 if (toDelete is null)
                 {
@@ -130,6 +130,17 @@ namespace FoodDeliveryNetwork.Services.Data
             {
                 return 0;
             }
+        }
+
+        public async Task<Guid> GetRestaurantIdByDispatcherId(string dispatcherId)
+        {
+            if (dispatcherId is null) return Guid.Empty;
+            
+            var r = await dbContext.DispatcherToRestaurants.FirstOrDefaultAsync(d => d.DispatcherId.ToString() == dispatcherId);
+
+            if (r is null) return Guid.Empty;
+            
+            return r.RestaurantId;
         }
     }
 }

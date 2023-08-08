@@ -2,9 +2,12 @@
 using FoodDeliveryNetwork.Data.Models;
 using FoodDeliveryNetwork.Services.Data.Contracts;
 using FoodDeliveryNetwork.Web.ViewModels.Common;
+using FoodDeliveryNetwork.Web.ViewModels.Dispatcher;
 using FoodDeliveryNetwork.Web.ViewModels.Home;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
+using static FoodDeliveryNetwork.Common.EntityConstants;
 
 namespace FoodDeliveryNetwork.Services.Data
 {
@@ -223,6 +226,112 @@ namespace FoodDeliveryNetwork.Services.Data
             };
 
             return result;
+        }
+
+        public async Task<bool> OrderCanBeCancelledByDispatcher(Guid orderId)
+        {
+            var order = await dbContext.Orders
+                .FirstOrDefaultAsync(x => x.Id == orderId &&
+                    (x.OrderStatus == OrderStatus.Pending || x.OrderStatus == OrderStatus.Cooking || x.OrderStatus == OrderStatus.ReadyForPickup)
+                );
+
+            return order is not null;
+        }
+
+        public async Task<bool> OrderStatusCanBeChangedByDispatcher(Guid orderId, OrderStatus newStatus)
+        {
+            switch (newStatus)
+            {
+                case OrderStatus.Cooking:
+                    var order = await dbContext.Orders.FirstOrDefaultAsync(x => x.Id == orderId && x.OrderStatus == OrderStatus.Pending);
+                    return order is not null;
+                case OrderStatus.ReadyForPickup:
+                    var order2 = await dbContext.Orders.FirstOrDefaultAsync(x => x.Id == orderId && x.OrderStatus == OrderStatus.Cooking);
+                    return order2 is not null;
+                case OrderStatus.Pending:
+                case OrderStatus.OnTheWay:
+                case OrderStatus.Delivered:
+                case OrderStatus.CancelledByCustomer:
+                case OrderStatus.CancelledByRestaurant:
+                case OrderStatus.ReturnedToRestaurant:
+                default:
+                    return false;
+            }
+        }
+
+        public async Task<bool> OrderCanBeAccessedByDispatcher(Guid orderId, string userId)
+        {
+            var order = await dbContext.Orders.FirstOrDefaultAsync(x => x.Id == orderId);
+            return await dbContext.DispatcherToRestaurants.AnyAsync(x => x.RestaurantId == order.RestaurantId && x.DispatcherId.ToString() == userId);
+        }
+
+        public async Task<AllActiveOrdersViewModel> GetAllActiveOrdersByRestaurantId(Guid restaurantId, AllActiveOrdersViewModel model)
+        {
+            //if null - get all orders
+            //if not null - get orders from the last x hours
+
+            if (model is null) model = new();
+            if (model.BaseQueryModel is null) model.BaseQueryModel = new();
+
+            var query = model.BaseQueryModel;
+            var ordersQuery = dbContext.Orders.AsQueryable();
+
+            ordersQuery = ordersQuery.Where(x => x.RestaurantId == restaurantId);
+            ordersQuery = ordersQuery.Where(x => x.OrderStatus == OrderStatus.Pending ||
+                                                 x.OrderStatus == OrderStatus.Cooking ||
+                                                 x.OrderStatus == OrderStatus.ReadyForPickup);
+
+            if (!string.IsNullOrWhiteSpace(query.SearchTerm))
+            {
+                var wildcard = $"%{query.SearchTerm.ToLower()}%";
+
+                ordersQuery = ordersQuery
+                    .Where(x => EF.Functions.Like(x.Customer.PhoneNumber.ToLower(), wildcard) ||
+                                EF.Functions.Like(x.Customer.FirstName.ToLower(), wildcard) ||
+                                EF.Functions.Like(x.Customer.UserName.ToLower(), wildcard) ||
+                                EF.Functions.Like(x.Customer.LastName.ToLower(), wildcard));
+            }
+
+            switch (query.SortBy)
+            {
+                case BaseQueryModelSort.Newest:
+                    ordersQuery = ordersQuery.OrderByDescending(x => x.CreatedOn);
+                    break;
+                case BaseQueryModelSort.Oldest:
+                    ordersQuery = ordersQuery.OrderBy(x => x.CreatedOn);
+                    break;
+                default:
+                    ordersQuery = ordersQuery.OrderBy(x => x.CreatedOn);
+                    break;
+            }
+            var orders = await ordersQuery
+                .Include(x => x.Customer)
+                .Skip((query.Page - 1) * query.PageSize)
+                .Take(query.PageSize)
+                .ToArrayAsync();
+
+            model.Orders = orders.Select(x => new SingleActiveOrderViewModel
+            {
+                Id = x.Id,
+                CustomerUsername = x.Customer.UserName,
+                CustomerFirstName = x.Customer.FirstName,
+                CustomerLastName = x.Customer.LastName,
+                CustomerPhoneNumber = x.Customer.PhoneNumber,
+                Address = x.Address,
+                CreatedOn = x.CreatedOn,
+                TotalPrice = x.TotalPrice,
+                Status = x.OrderStatus,
+                Dishes = x.Dishes.Select(x => new DispatcherOrderDishViewModel
+                {
+                    DishName = x.DishName,
+                    Quantity = x.Quantity,
+                    UnitPrice = x.UnitPrice,
+                }).ToArray(),
+            }).ToArray();
+
+            model.TotalOrders = model.Orders.Count();
+
+            return model;
         }
     }
 }
