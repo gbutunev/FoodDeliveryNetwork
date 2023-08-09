@@ -1,0 +1,54 @@
+﻿@using FoodDeliveryNetwork.Data.Models;
+@using FoodDeliveryNetwork.Web.ViewModels.Courier;
+
+@model SingleOrderViewModel
+
+
+<div class="card">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <h4>Order Information</h4>
+                <p>Created On: @Model.CreatedOn</p>
+                <p>Restaurant Name: @Model.RestaurantName</p>
+                <p>Pickup Location: @Model.RestaurantAddress</p>
+                <p>Delivery Address: @Model.CustomerAddress</p>
+            </div>
+            <div class="col-md-6">
+                <h4>Customer Information</h4>
+                <p>Name: @Model.CustomerFirstName @Model.CustomerLastName</p>
+                <p>Phone Number: @Model.CustomerPhoneNumber</p>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer d-flex align-content-end flex-column">
+        @if (Model.OrderStatus == OrderStatus.ReadyForPickup)
+        {
+            @using (Html.BeginForm("ManageOrder", "Courier", new { area = "Staff" }, FormMethod.Post))
+            {
+                @Html.Hidden("orderId", Model.Id)
+                @Html.Hidden("newStatus", OrderStatus.OnTheWay)
+
+                <button type="submit" class="btn btn-outline-success">Assign</button>
+            }
+
+        }
+        @if (Model.OrderStatus == OrderStatus.OnTheWay)
+        {
+            @using (Html.BeginForm("ManageOrder", "Courier", new { area = "Staff" }, FormMethod.Post))
+            {
+                @Html.Hidden("orderId", Model.Id)
+                @Html.Hidden("newStatus", OrderStatus.Delivered)
+
+                <button type="submit" class="btn btn-success me-2">Delivered to Customer</button>
+            }
+            @using (Html.BeginForm("ManageOrder", "Courier", new { area = "Staff" }, FormMethod.Post))
+            {
+                @Html.Hidden("orderId", Model.Id)
+                @Html.Hidden("newStatus", OrderStatus.ReturnedToRestaurant)
+
+                <button type="submit" class="btn btn-danger">Returned to Restaurant</button>
+            }
+        }
+    </div>
+</div>

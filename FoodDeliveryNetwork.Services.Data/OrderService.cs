@@ -83,8 +83,8 @@ namespace FoodDeliveryNetwork.Services.Data
             //if null - get all orders
             //if not null - get orders from the last x hours
 
-            if (model is null) model = new();
-            if (model.BaseQueryModel is null) model.BaseQueryModel = new();
+            model ??= new();
+            model.BaseQueryModel ??= new();
 
             var query = model.BaseQueryModel;
 
@@ -246,12 +246,6 @@ namespace FoodDeliveryNetwork.Services.Data
                 case OrderStatus.ReadyForPickup:
                     var order2 = await dbContext.Orders.FirstOrDefaultAsync(x => x.Id == orderId && x.OrderStatus == OrderStatus.Cooking);
                     return order2 is not null;
-                case OrderStatus.Pending:
-                case OrderStatus.OnTheWay:
-                case OrderStatus.Delivered:
-                case OrderStatus.CancelledByCustomer:
-                case OrderStatus.CancelledByRestaurant:
-                case OrderStatus.ReturnedToRestaurant:
                 default:
                     return false;
             }
@@ -261,6 +255,28 @@ namespace FoodDeliveryNetwork.Services.Data
         {
             var order = await dbContext.Orders.FirstOrDefaultAsync(x => x.Id == orderId);
             return await dbContext.DispatcherToRestaurants.AnyAsync(x => x.RestaurantId == order.RestaurantId && x.DispatcherId.ToString() == userId);
+        }
+
+        public async Task<bool> OrderCanBeAccessedByCourier(Guid orderId, string userId)
+        {
+            var order = await dbContext.Orders.FirstOrDefaultAsync(x => x.Id == orderId);
+            return await dbContext.CourierToRestaurants.AnyAsync(x => x.RestaurantId == order.RestaurantId && x.CourierId.ToString() == userId);
+        }
+
+        public async Task<bool> OrderStatusCanBeChangedByCourier(Guid orderId, OrderStatus newStatus)
+        {
+            switch (newStatus)
+            {
+                case OrderStatus.OnTheWay:
+                    var order = await dbContext.Orders.FirstOrDefaultAsync(x => x.Id == orderId && x.OrderStatus == OrderStatus.ReadyForPickup);
+                    return order is not null;
+                case OrderStatus.Delivered:
+                case OrderStatus.ReturnedToRestaurant:
+                    var order2 = await dbContext.Orders.FirstOrDefaultAsync(x => x.Id == orderId && x.OrderStatus == OrderStatus.OnTheWay);
+                    return order2 is not null;
+                default:
+                    return false;
+            }
         }
 
         public async Task<AllOrdersViewModel> GetAllActiveOrdersByRestaurantId(Guid restaurantId, AllOrdersViewModel model)
@@ -393,6 +409,29 @@ namespace FoodDeliveryNetwork.Services.Data
             model.TotalOrders = model.Orders.Count();
 
             return model;
+        }
+
+        public async Task<int> AssignCourierToOrder(string userId, Guid orderId)
+        {
+            if (!Guid.TryParse(userId, out Guid userGuid) || userGuid == Guid.Empty)
+                return -1;
+
+            var order = await dbContext.Orders.FirstOrDefaultAsync(x => x.Id == orderId);
+            if (order is null)
+                return -2;
+
+            try
+            {
+                order.CourierId = userGuid;
+                dbContext.Orders.Update(order);
+                await dbContext.SaveChangesAsync();
+
+                return 1;
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
         }
     }
 }

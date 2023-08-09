@@ -16,6 +16,8 @@ namespace FoodDeliveryNetwork.Data.Configurations
             builder.HasOne(x => x.Restaurant)
                 .WithMany()
                 .OnDelete(DeleteBehavior.NoAction);
+
+
         }
     }
 }

@@ -112,31 +112,8 @@ namespace FoodDeliveryNetwork.Services.Data
             else
                 predicate = x => x.ApplicationStatus == OwnerApplicationStatus.Pending;
 
-
-            if (model is null || model.BaseQueryModel is null)
-            {
-
-                model.Applications = await dbContext.OwnerApplications
-                    .Where(predicate)
-                    .OrderByDescending(x => x.CreatedOn)
-                    .Select(x => new SingleApplicationViewModel()
-                    {
-                        Id = x.Id,
-                        OwnerFullName = x.OwnerFullName,
-                        OwnerEGN = x.OwnerEGN,
-                        CompanyName = x.CompanyName,
-                        EIK = x.EIK,
-                        HeadquartersFullAddress = x.HeadquartersFullAddress,
-                        ApplicationStatus = x.ApplicationStatus,
-                        CreatedOn = x.CreatedOn,
-                        OwnerPhoneNumber = x.ApplicationUser.PhoneNumber,
-                    })
-                    .ToArrayAsync();
-
-                model.TotalApplications = model.Applications.Count();
-
-                return model;
-            }
+            model ??= new();
+            model.BaseQueryModel ??= new();
 
             var query = model.BaseQueryModel;
 

@@ -15,6 +15,11 @@ namespace FoodDeliveryNetwork.Data.Models
         [ForeignKey(nameof(CustomerId))]
         public ApplicationUser Customer { get; set; }
 
+        public Guid? CourierId { get; set; }
+
+        [ForeignKey(nameof(CourierId))]
+        public ApplicationUser Courier { get; set; }
+
         [Required]
         [MaxLength(EntityConstants.CustomerConstants.AddressMaxLength)]
         public string Address { get; set; }

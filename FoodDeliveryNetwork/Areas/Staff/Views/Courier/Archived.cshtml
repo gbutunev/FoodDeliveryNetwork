@@ -4,11 +4,11 @@
 @model AllOrdersViewModel
 
 @{
-    ViewBag.Title = "Available for pickup";
+    ViewBag.Title = "Archived orders";
 }
 
 @*Search bar*@
-@using (Html.BeginForm("Index", "Courier", FormMethod.Get, new { @class = "row gy-2 gx-3 align-items-center mb-5" }))
+@using (Html.BeginForm("Archived", "Courier", FormMethod.Get, new { @class = "row gy-2 gx-3 align-items-center mb-5" }))
 {
     <div class="col-auto">
         @Html.TextBoxFor(m => m.BaseQueryModel.SearchTerm, new { @class = "form-control", placeholder = "Search" })
@@ -33,7 +33,7 @@
 @if (Model.TotalOrders == 0)
 {
     <div class="alert alert-info" role="alert">
-        No waiting orders!
+        No previous orders!
     </div>
 }
 else
