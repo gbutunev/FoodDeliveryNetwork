@@ -56,7 +56,7 @@ namespace FoodDeliveryNetwork.Web.Controllers
 
             viewModel.OwnerId = User.GetId();
 
-            if (viewModel.Image.Length > 0)
+            if (viewModel.Image is not null && viewModel.Image.Length > 0)
             {
                 viewModel.ImageGuid = Guid.NewGuid().ToString();
 
@@ -140,9 +140,9 @@ namespace FoodDeliveryNetwork.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> EditRestaurant(string id, RestaurantFormModel model)
         {
-            if (model.Image.Length > 0)
+            string oldImageGuid = (await restaurantService.GetRestaurantByIdAsync(Guid.Parse(id))).ImageGuid;
+            if (model.Image is not null && model.Image.Length > 0)
             {
-                string oldImageGuid = (await restaurantService.GetRestaurantByIdAsync(Guid.Parse(id))).ImageGuid;
 
                 model.ImageGuid = Guid.NewGuid().ToString();
 
@@ -166,6 +166,11 @@ namespace FoodDeliveryNetwork.Web.Controllers
                     catch (Exception) { }
                 }
             }
+            else
+            {
+                model.ImageGuid = oldImageGuid;
+            }
+
             int r = await restaurantService.EditRestaurantAsync(id, model);
 
 
@@ -442,7 +447,7 @@ namespace FoodDeliveryNetwork.Web.Controllers
 
             model.RestaurantId = Guid.Parse(id);
 
-            if (model.Image.Length > 0)
+            if (model.Image is not null && model.Image.Length > 0)
             {
                 model.ImageGuid = Guid.NewGuid().ToString();
 
@@ -492,9 +497,9 @@ namespace FoodDeliveryNetwork.Web.Controllers
             bool isOwner = await restaurantService.RestaurantIsOwnedByUserAsync(model.RestaurantId.ToString(), User.GetId());
             if (!isOwner) return RedirectToAction(nameof(Index));
 
-            if (model.Image.Length > 0)
+            string oldImageGuid = (await dishService.GetDishByIdAsync(model.DishId)).ImageGuid;
+            if (model.Image is not null && model.Image.Length > 0)
             {
-                string oldImageGuid = (await dishService.GetDishByIdAsync(model.DishId)).ImageGuid;
 
                 model.ImageGuid = Guid.NewGuid().ToString();
 
@@ -517,6 +522,10 @@ namespace FoodDeliveryNetwork.Web.Controllers
                     }
                     catch (Exception) { }
                 }
+            }
+            else
+            {
+                model.ImageGuid = oldImageGuid;
             }
 
             int r = await dishService.EditDishAsync(model);

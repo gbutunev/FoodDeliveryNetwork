@@ -69,7 +69,7 @@ namespace FoodDeliveryNetwork.Services.Data
                     Price = d.Price,
                     Description = d.Description,
                     RestaurantId = d.RestaurantId,
-                    ImageGuid = d.ImageGuid
+                    ImageGuid = d.ImageGuid,
                 })
                 .FirstOrDefaultAsync();
         }
