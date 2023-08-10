@@ -53,6 +53,7 @@ namespace FoodDeliveryNetwork.Web
             builder.Services.AddScoped<IAddressService, AddressService>();
             builder.Services.AddScoped<IOrderService, OrderService>();
             builder.Services.AddScoped<IDeliveryService, DeliveryService>();
+            builder.Services.AddScoped<IPictureService, PictureService>();
 
             var app = builder.Build();
 

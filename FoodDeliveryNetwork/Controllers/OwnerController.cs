@@ -1,4 +1,5 @@
-﻿using FoodDeliveryNetwork.Services.Data.Contracts;
+﻿using FoodDeliveryNetwork.Data.Models;
+using FoodDeliveryNetwork.Services.Data.Contracts;
 using FoodDeliveryNetwork.Web.Extensions;
 using FoodDeliveryNetwork.Web.ViewModels.Owner;
 using Microsoft.AspNetCore.Authorization;
@@ -13,12 +14,15 @@ namespace FoodDeliveryNetwork.Web.Controllers
         private readonly ICourierService courierService;
         private readonly IDispatcherService dispatcherService;
         private readonly IDishService dishService;
-        public OwnerController(IRestaurantService restaurantService, IDispatcherService dispatcherService, IDishService dishService, ICourierService courierService)
+        private readonly IPictureService pictureService;
+        public OwnerController(IRestaurantService restaurantService, IDispatcherService dispatcherService, IDishService dishService, ICourierService courierService, IPictureService pictureService)
         {
             this.restaurantService = restaurantService;
             this.dispatcherService = dispatcherService;
             this.dishService = dishService;
             this.courierService = courierService;
+            this.pictureService = pictureService;
+
         }
 
         //MyRestaurants
@@ -27,6 +31,13 @@ namespace FoodDeliveryNetwork.Web.Controllers
             var ownerId = User.GetId();
 
             var restaurants = await restaurantService.GetRestaurantsByOwnerIdAsync(ownerId);
+
+            foreach (var item in restaurants.Where(x => x.ImageGuid is not null))
+            {
+                var pic = await pictureService.GetImage(item.ImageGuid);
+                item.Image = pic.Item1;
+                item.ImageType = pic.Item2;
+            }
 
             return View(restaurants);
         }
@@ -44,6 +55,21 @@ namespace FoodDeliveryNetwork.Web.Controllers
                 return View(viewModel);
 
             viewModel.OwnerId = User.GetId();
+
+            if (viewModel.Image.Length > 0)
+            {
+                viewModel.ImageGuid = Guid.NewGuid().ToString();
+
+                try
+                {
+                    Minio.PutObjectResponse hmm = await pictureService.UploadImage(viewModel.Image, viewModel.ImageGuid);
+                }
+                catch (Exception)
+                {
+                    ModelState.AddModelError("", "A problem occurred while uploading the image!");
+                    return View(viewModel);
+                }
+            }
 
             var r = await restaurantService.AddRestaurant(viewModel);
 
@@ -114,7 +140,34 @@ namespace FoodDeliveryNetwork.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> EditRestaurant(string id, RestaurantFormModel model)
         {
+            if (model.Image.Length > 0)
+            {
+                string oldImageGuid = (await restaurantService.GetRestaurantByIdAsync(Guid.Parse(id))).ImageGuid;
+
+                model.ImageGuid = Guid.NewGuid().ToString();
+
+                try
+                {
+                    Minio.PutObjectResponse hmm = await pictureService.UploadImage(model.Image, model.ImageGuid);
+                }
+                catch (Exception)
+                {
+                    ModelState.AddModelError("", "A problem occurred while uploading the new image!");
+                    model.ImageGuid = oldImageGuid;
+                    return View(model);
+                }
+
+                if (oldImageGuid is not null)
+                {
+                    try
+                    {
+                        await pictureService.RemoveImage(oldImageGuid);
+                    }
+                    catch (Exception) { }
+                }
+            }
             int r = await restaurantService.EditRestaurantAsync(id, model);
+
 
             if (r == 1)
             {
@@ -344,13 +397,20 @@ namespace FoodDeliveryNetwork.Web.Controllers
             bool isOwner = await restaurantService.RestaurantIsOwnedByUserAsync(id, User.GetId());
             if (!isOwner) return RedirectToAction(nameof(Index));
 
-            List<DishViewModel> dishes = (await dishService.GetDishesByRestaurantIdAsync(id)).ToList();
+            List<DishViewModel> dishes = (await dishService.GetOwnerDishesByRestaurantIdAsync(id)).ToList();
 
             ManageDishesViewModel model = new ManageDishesViewModel
             {
                 Dishes = dishes,
                 RestaurantId = Guid.Parse(id),
             };
+
+            foreach (var item in model.Dishes.Where(x => x.ImageGuid is not null))
+            {
+                var pic = await pictureService.GetImage(item.ImageGuid);
+                item.Image = pic.Item1;
+                item.ImageType = pic.Item2;
+            }
 
             return View(model);
         }
@@ -361,7 +421,7 @@ namespace FoodDeliveryNetwork.Web.Controllers
             bool isOwner = await restaurantService.RestaurantIsOwnedByUserAsync(id, User.GetId());
             if (!isOwner) return RedirectToAction(nameof(Index));
 
-            DishViewModel model = new DishViewModel
+            DishFormModel model = new DishFormModel
             {
                 RestaurantId = Guid.Parse(id)
             };
@@ -370,7 +430,7 @@ namespace FoodDeliveryNetwork.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> NewDish(string id, DishViewModel model)
+        public async Task<IActionResult> NewDish(string id, DishFormModel model)
         {
             bool isOwner = await restaurantService.RestaurantIsOwnedByUserAsync(id, User.GetId());
             if (!isOwner) return RedirectToAction(nameof(Index));
@@ -381,6 +441,21 @@ namespace FoodDeliveryNetwork.Web.Controllers
             }
 
             model.RestaurantId = Guid.Parse(id);
+
+            if (model.Image.Length > 0)
+            {
+                model.ImageGuid = Guid.NewGuid().ToString();
+
+                try
+                {
+                    Minio.PutObjectResponse resp = await pictureService.UploadImage(model.Image, model.ImageGuid);
+                }
+                catch (Exception)
+                {
+                    ModelState.AddModelError("", "A problem occurred while uploading the image!");
+                    return View(model);
+                }
+            }
 
             int r = await dishService.AddDishToRestaurantAsync(model);
 
@@ -397,7 +472,7 @@ namespace FoodDeliveryNetwork.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> EditDish(DishViewModel model)
+        public async Task<IActionResult> EditDish(DishFormModel model)
         {
             bool isOwner = await restaurantService.RestaurantIsOwnedByUserAsync(model.RestaurantId.ToString(), User.GetId());
             if (!isOwner) return RedirectToAction(nameof(Index));
@@ -412,10 +487,37 @@ namespace FoodDeliveryNetwork.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ЕditDishSubmit(DishViewModel model)
+        public async Task<IActionResult> ЕditDishSubmit(DishFormModel model)
         {
             bool isOwner = await restaurantService.RestaurantIsOwnedByUserAsync(model.RestaurantId.ToString(), User.GetId());
             if (!isOwner) return RedirectToAction(nameof(Index));
+
+            if (model.Image.Length > 0)
+            {
+                string oldImageGuid = (await dishService.GetDishByIdAsync(model.DishId)).ImageGuid;
+
+                model.ImageGuid = Guid.NewGuid().ToString();
+
+                try
+                {
+                    Minio.PutObjectResponse hmm = await pictureService.UploadImage(model.Image, model.ImageGuid);
+                }
+                catch (Exception)
+                {
+                    ModelState.AddModelError("", "A problem occurred while uploading the new image!");
+                    model.ImageGuid = oldImageGuid;
+                    return View(model);
+                }
+
+                if (oldImageGuid is not null)
+                {
+                    try
+                    {
+                        await pictureService.RemoveImage(oldImageGuid);
+                    }
+                    catch (Exception) { }
+                }
+            }
 
             int r = await dishService.EditDishAsync(model);
 
@@ -435,7 +537,7 @@ namespace FoodDeliveryNetwork.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> DeleteDish(DishViewModel model)
+        public async Task<IActionResult> DeleteDish(DishFormModel model)
         {
             bool isOwner = await restaurantService.RestaurantIsOwnedByUserAsync(model.RestaurantId.ToString(), User.GetId());
             if (!isOwner) return RedirectToAction(nameof(Index));

@@ -28,6 +28,6 @@ namespace FoodDeliveryNetwork.Data.Models
         [Column(TypeName = "decimal(7, 2)")]
         public decimal Price { get; set; }
 
-        //TODO: Add Images
+        public string ImageGuid { get; set; }
     }
 }

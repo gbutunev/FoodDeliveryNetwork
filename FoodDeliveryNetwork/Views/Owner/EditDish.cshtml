@@ -1,8 +1,8 @@
 ﻿@using FoodDeliveryNetwork.Web.ViewModels.Owner;
 
-@model DishViewModel
+@model DishFormModel
 
-@using (Html.BeginForm("ЕditDishSubmit", "Owner", FormMethod.Post))
+@using (Html.BeginForm("ЕditDishSubmit", "Owner", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
@@ -24,12 +24,12 @@
         @Html.ValidationMessageFor(model => model.Price, "", new { @class = "text-danger" })
     </div>
 
-    @*    <div class="form-grup">
+    <div class="form-group">
         <label for="formFile" class="form-label">Dish image</label>
-        <input name="Image" class="form-control" type="file" id="formFile" accept=".jpg, .jpeg, .png">
+        @Html.TextBoxFor(model=> model.Image, new {type = "file", id = "formFile", accept="image/jpeg, image/png", @class="form-control" })
         <small class="form-text text-muted">Accepts JPG and PNG files under 5MB.</small>
         @Html.ValidationMessageFor(model => model.Image, "", new { @class = "text-danger" })
-    </div>*@
+    </div>
 
     @Html.HiddenFor(model => model.DishId)
     @Html.HiddenFor(model => model.RestaurantId)

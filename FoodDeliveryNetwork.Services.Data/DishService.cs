@@ -1,6 +1,7 @@
 ﻿using FoodDeliveryNetwork.Data;
 using FoodDeliveryNetwork.Data.Models;
 using FoodDeliveryNetwork.Services.Data.Contracts;
+using FoodDeliveryNetwork.Web.ViewModels.Home;
 using FoodDeliveryNetwork.Web.ViewModels.Owner;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,7 +15,7 @@ namespace FoodDeliveryNetwork.Services.Data
             this.dbContext = dbContext;
         }
 
-        public async Task<int> AddDishToRestaurantAsync(DishViewModel model)
+        public async Task<int> AddDishToRestaurantAsync(DishFormModel model)
         {
             try
             {
@@ -23,7 +24,8 @@ namespace FoodDeliveryNetwork.Services.Data
                     Name = model.Name,
                     Description = model.Description,
                     Price = model.Price,
-                    RestaurantId = model.RestaurantId
+                    RestaurantId = model.RestaurantId,
+                    ImageGuid = model.ImageGuid
                 };
 
                 await dbContext.Dishes.AddAsync(dish);
@@ -38,7 +40,7 @@ namespace FoodDeliveryNetwork.Services.Data
             }
         }
 
-        public async Task<IEnumerable<DishViewModel>> GetDishesByRestaurantIdAsync(string id)
+        public async Task<IEnumerable<DishViewModel>> GetOwnerDishesByRestaurantIdAsync(string id)
         {
             return await dbContext
                 .Dishes
@@ -50,27 +52,29 @@ namespace FoodDeliveryNetwork.Services.Data
                     Price = d.Price,
                     Description = d.Description,
                     RestaurantId = d.RestaurantId,
+                    ImageGuid = d.ImageGuid,
                 })
                 .ToListAsync();
         }
 
-        public async Task<DishViewModel> GetDishByIdAsync(int dishId)
+        public async Task<DishFormModel> GetDishByIdAsync(int dishId)
         {
             return await dbContext
                 .Dishes
                 .Where(d => d.Id == dishId)
-                .Select(d => new DishViewModel
+                .Select(d => new DishFormModel
                 {
                     DishId = d.Id,
                     Name = d.Name,
                     Price = d.Price,
                     Description = d.Description,
                     RestaurantId = d.RestaurantId,
+                    ImageGuid = d.ImageGuid
                 })
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<int> DeleteDishAsync(DishViewModel model)
+        public async Task<int> DeleteDishAsync(DishFormModel model)
         {
             var dishToDelete = await dbContext.Dishes.FirstOrDefaultAsync(d => d.Id == model.DishId);
 
@@ -90,7 +94,7 @@ namespace FoodDeliveryNetwork.Services.Data
             }
         }
 
-        public async Task<int> EditDishAsync(DishViewModel model)
+        public async Task<int> EditDishAsync(DishFormModel model)
         {
             var dishToEdit = await dbContext.Dishes.FirstOrDefaultAsync(d => d.Id == model.DishId);
 
@@ -102,6 +106,7 @@ namespace FoodDeliveryNetwork.Services.Data
                 dishToEdit.Name = model.Name;
                 dishToEdit.Description = model.Description;
                 dishToEdit.Price = model.Price;
+                dishToEdit.ImageGuid = model.ImageGuid;
 
                 dbContext.Dishes.Update(dishToEdit);
 
@@ -114,6 +119,22 @@ namespace FoodDeliveryNetwork.Services.Data
                 return 0;
             }
 
+        }
+
+        public async Task<IEnumerable<CustomerOrderDish>> GetCustomerDishesByRestaurantIdAsync(string id)
+        {
+            return await dbContext
+                .Dishes
+                .Where(d => d.RestaurantId.ToString() == id)
+                .Select(d => new CustomerOrderDish
+                {
+                    Id = d.Id,
+                    Name = d.Name,
+                    Price = d.Price,
+                    Description = d.Description,
+                    ImageGuid = d.ImageGuid,
+                })
+                .ToListAsync();
         }
     }
 }

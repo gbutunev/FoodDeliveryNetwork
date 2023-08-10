@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Minio" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\FoodDeliveryNetwork.Data\FoodDeliveryNetwork.Data.csproj" />
     <ProjectReference Include="..\FoodDeliveryNetwork.Web.ViewModels\FoodDeliveryNetwork.Web.ViewModels.csproj" />
   </ItemGroup>

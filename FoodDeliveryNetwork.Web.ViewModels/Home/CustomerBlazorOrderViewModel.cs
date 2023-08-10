@@ -13,6 +13,10 @@ namespace FoodDeliveryNetwork.Web.ViewModels.Home
         [MinLength(EntityConstants.CustomerConstants.AddressMinLength)]
         [MaxLength(EntityConstants.CustomerConstants.AddressMaxLength)]
         public string Address { get; set; }
-        public Dictionary<Dish, int> OrderItems { get; set; } = new Dictionary<Dish, int>();
+
+        /// <summary>
+        /// DishId, Quantity
+        /// </summary>
+        public Dictionary<CustomerOrderDish, int> OrderItems { get; set; } = new Dictionary<CustomerOrderDish, int>();
     }
 }

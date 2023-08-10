@@ -1,12 +1,10 @@
-﻿namespace FoodDeliveryNetwork.Web.ViewModels.Owner
+﻿namespace FoodDeliveryNetwork.Web.ViewModels.Home
 {
-    public class DishViewModel
+    public class CustomerOrderDish
     {
-        public int DishId { get; set; }
-
+        public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public Guid RestaurantId { get; set; }
         public decimal Price { get; set; }
 
         public string ImageGuid { get; set; }

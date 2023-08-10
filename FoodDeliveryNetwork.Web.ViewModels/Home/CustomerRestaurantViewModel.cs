@@ -8,5 +8,9 @@
         public string Description { get; set; }
         public string Address { get; set; }
         public string PhoneNumber { get; set; }
+
+        public string ImageGuid { get; set; }
+        public byte[] Image { get; set; }
+        public string ImageType { get; set; }
     }
 }

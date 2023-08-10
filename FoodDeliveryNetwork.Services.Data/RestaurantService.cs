@@ -64,7 +64,8 @@ namespace FoodDeliveryNetwork.Services.Data
                     Description = model.Description,
                     Handle = model.Handle,
                     PhoneNumber = model.PhoneNumber,
-                    OwnerId = Guid.Parse(model.OwnerId)
+                    OwnerId = Guid.Parse(model.OwnerId),
+                    ImageGuid = model.ImageGuid
                 };
 
                 await dbContext.Restaurants.AddAsync(restaurant);
@@ -115,7 +116,8 @@ namespace FoodDeliveryNetwork.Services.Data
                     Handle = x.Handle,
                     Description = x.Description,
                     PhoneNumber = x.PhoneNumber,
-                    OwnerId = x.OwnerId.ToString()
+                    OwnerId = x.OwnerId.ToString(),
+                    ImageGuid = x.ImageGuid
                 })
                 .FirstOrDefaultAsync();
         }
@@ -149,6 +151,7 @@ namespace FoodDeliveryNetwork.Services.Data
                 restaurant.Description = model.Description;
                 restaurant.Handle = model.Handle;
                 restaurant.PhoneNumber = model.PhoneNumber;
+                restaurant.ImageGuid = model.ImageGuid;
 
                 dbContext.Restaurants.Update(restaurant);
                 await dbContext.SaveChangesAsync();
@@ -163,26 +166,7 @@ namespace FoodDeliveryNetwork.Services.Data
 
         public async Task<CustomerAllRestaurantsViewModel> GetAllRestaurantsAsync(CustomerAllRestaurantsViewModel model)
         {
-            if (model is null || model.BaseQueryModel is null)
-            {
-                model.Restaurants = await dbContext
-                    .Restaurants
-                    .OrderBy(x => x.Name)
-                    .Select(x => new CustomerRestaurantViewModel
-                    {
-                        Id = x.Id,
-                        Name = x.Name,
-                        Address = x.Address,
-                        Handle = x.Handle,
-                        Description = x.Description,
-                        PhoneNumber = x.PhoneNumber,
-                    })
-                    .ToArrayAsync();
-
-                model.TotalRestaurants = model.Restaurants.Count();
-
-                return model;
-            }
+            model ??= new();
 
             var query = model.BaseQueryModel;
 
@@ -224,6 +208,7 @@ namespace FoodDeliveryNetwork.Services.Data
                     Handle = x.Handle,
                     Description = x.Description,
                     PhoneNumber = x.PhoneNumber,
+                    ImageGuid = x.ImageGuid
                 })
                 .ToArrayAsync();
 

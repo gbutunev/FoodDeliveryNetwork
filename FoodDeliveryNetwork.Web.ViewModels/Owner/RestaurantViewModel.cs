@@ -10,6 +10,10 @@
         public string PhoneNumber { get; set; }
         public int TotalDishes { get; set; }
         public int TotalDispatchers { get; set; }
-        public int TotalCouriers { get; set; }        
+        public int TotalCouriers { get; set; }
+
+        public string ImageGuid { get; set; }
+        public byte[] Image { get; set; }
+        public string ImageType { get; set; }
     }
 }

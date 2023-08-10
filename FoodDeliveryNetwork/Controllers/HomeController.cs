@@ -15,17 +15,26 @@ namespace FoodDeliveryNetwork.Web.Controllers
         private readonly IRestaurantService restaurantService;
         private readonly IOrderService orderService;
         private readonly IAddressService addressService;
-        public HomeController(IRestaurantService restaurantService, IOrderService orderService, IAddressService addressService)
+        private readonly IPictureService pictureService;
+        public HomeController(IRestaurantService restaurantService, IOrderService orderService, IAddressService addressService, IPictureService pictureService)
         {
             this.restaurantService = restaurantService;
             this.orderService = orderService;
             this.addressService = addressService;
+            this.pictureService = pictureService;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index([FromQuery] CustomerAllRestaurantsViewModel model)
         {
             var newModel = await restaurantService.GetAllRestaurantsAsync(model);
+
+            foreach (var item in newModel.Restaurants.Where(x => x.ImageGuid is not null))
+            {
+                var pic = await pictureService.GetImage(item.ImageGuid);
+                item.Image = pic.Item1;
+                item.ImageType = pic.Item2;
+            }
 
             return View(newModel);
         }

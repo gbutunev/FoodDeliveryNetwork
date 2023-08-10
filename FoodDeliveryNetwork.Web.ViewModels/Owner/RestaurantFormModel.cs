@@ -1,4 +1,6 @@
 ﻿using FoodDeliveryNetwork.Common;
+using FoodDeliveryNetwork.Web.ViewModels.Common.CustomAttributes;
+using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
 namespace FoodDeliveryNetwork.Web.ViewModels.Owner
@@ -33,13 +35,14 @@ namespace FoodDeliveryNetwork.Web.ViewModels.Owner
 
         public string OwnerId { get; set; }
 
-        ////Not required
-        //[DataType(DataType.Upload)]
-        //[Display(Name = "Background image")]
+        //Not required
+        [DataType(DataType.Upload)]
+        [Display(Name = "Background image")]
+        //FileExtension Attribute only works on string properties !!!!!!!!!
         //[FileExtensions(Extensions = "jpg,jpeg,png,JPG,JPEG,PNG", ErrorMessage = "Please select a JPG or PNG file.")]
-        //[MaxFileSize(5 * 1024 * 1024, ErrorMessage = "The file size should not exceed 5MB.")]
-        //public IFormFile Image { get; set; }
+        [MaxFileSize(5 * 1024 * 1024, ErrorMessage = "The file size should not exceed 5MB.")]
+        public IFormFile Image { get; set; }
 
-        //FileExtensions always adds modelstate error?????????????
+        public string ImageGuid { get; set; }
     }
 }

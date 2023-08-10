@@ -18,7 +18,7 @@ namespace FoodDeliveryNetwork.Data.Models
         public string Name { get; set; }
 
         [MaxLength(EntityConstants.RestaurantConstants.DescriptionMaxLength)]
-        public string Description { get; set;}
+        public string Description { get; set; }
 
         [Required]
         [MaxLength(EntityConstants.RestaurantConstants.AddressMaxLength)]
@@ -34,8 +34,8 @@ namespace FoodDeliveryNetwork.Data.Models
         [Required]
         [ForeignKey(nameof(OwnerId))]
         public ApplicationUser Owner { get; set; }
-        
-        //TODO: Add Images
+
+        public string ImageGuid { get; set; }
 
         public virtual ICollection<Dish> Dishes { get; set; } = new HashSet<Dish>();
         public virtual ICollection<DispatcherToRestaurant> Dispatchers { get; set; } = new HashSet<DispatcherToRestaurant>();

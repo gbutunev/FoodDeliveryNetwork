@@ -1,4 +1,5 @@
 ﻿using FoodDeliveryNetwork.Data.Models;
+using FoodDeliveryNetwork.Services.Data;
 using FoodDeliveryNetwork.Services.Data.Contracts;
 using FoodDeliveryNetwork.Web.ViewModels.Home;
 using Microsoft.AspNetCore.Components;
@@ -21,6 +22,10 @@ namespace FoodDeliveryNetwork.Web.Views.Home.Blazor
         private IAddressService AddressService { get; set; }
         [Inject]
         private IOrderService OrderService { get; set; }
+        [Inject]
+        private IDishService DishService { get; set; }
+        [Inject]
+        private IPictureService PictureService { get; set; }
 
         private Restaurant currentRestaurant = new Restaurant();
 
@@ -32,7 +37,7 @@ namespace FoodDeliveryNetwork.Web.Views.Home.Blazor
         private AddressPopupMode addressPopupMode = AddressPopupMode.Saved;
 
         private CustomerBlazorOrderViewModel currentOrder = new CustomerBlazorOrderViewModel();
-
+        private IEnumerable<CustomerOrderDish> restaurantDishes = new HashSet<CustomerOrderDish>();
         protected override async Task OnParametersSetAsync()
         {
             if (RestaurantId == Guid.Empty || string.IsNullOrWhiteSpace(UserId))
@@ -43,11 +48,20 @@ namespace FoodDeliveryNetwork.Web.Views.Home.Blazor
             if (currentRestaurant is null || currentRestaurant.Id == Guid.Empty)
                 NavigationManager.NavigateTo("/");
 
+            restaurantDishes = await DishService.GetCustomerDishesByRestaurantIdAsync(RestaurantId.ToString());
+
+            foreach (var item in restaurantDishes.Where(x => x.ImageGuid is not null))
+            {
+                var pic = await PictureService.GetImage(item.ImageGuid);
+                item.Image = pic.Item1;
+                item.ImageType = pic.Item2;
+            }
+
             currentOrder.RestaurantId = currentRestaurant.Id;
             currentOrder.UserId = UserId;
         }
 
-        private void AddDish(Dish dish)
+        private void AddDish(CustomerOrderDish dish)
         {
             if (currentOrder.OrderItems.ContainsKey(dish))
             {
@@ -60,7 +74,7 @@ namespace FoodDeliveryNetwork.Web.Views.Home.Blazor
 
         }
 
-        private void RemoveDish(Dish dish)
+        private void RemoveDish(CustomerOrderDish dish)
         {
             if (currentOrder.OrderItems.ContainsKey(dish) && currentOrder.OrderItems[dish] > 0)
             {
