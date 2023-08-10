@@ -1,12 +1,15 @@
-﻿using FoodDeliveryNetwork.Data.Models;
+﻿using FoodDeliveryNetwork.Common;
+using FoodDeliveryNetwork.Data.Models;
 using FoodDeliveryNetwork.Services.Data.Contracts;
 using FoodDeliveryNetwork.Web.Extensions;
 using FoodDeliveryNetwork.Web.ViewModels.Courier;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FoodDeliveryNetwork.Web.Areas.Staff.Controllers
 {
     [Area("Staff")]
+    [Authorize(Roles = AppConstants.RoleNames.CourierRole)]
     public class CourierController : Controller
     {
         private readonly IDeliveryService deliveryService;
@@ -18,22 +21,28 @@ namespace FoodDeliveryNetwork.Web.Areas.Staff.Controllers
 
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index([FromQuery] AllOrdersViewModel model)
         {
             var r = await deliveryService.GetAllAvailableOrdersByUserId(User.GetId(), model);
             return View(r);
         }
+
+        [HttpGet]
         public async Task<IActionResult> Assigned([FromQuery] AllOrdersViewModel model)
         {
             var r = await deliveryService.GetAllAssignedOrdersByUserId(User.GetId(), model);
             return View(r);
         }
+
+        [HttpGet]
         public async Task<IActionResult> Archived([FromQuery] AllOrdersViewModel model)
         {
             var r = await deliveryService.GetAllArchivedOrdersByUserId(User.GetId(), model);
             return View(r);
         }
 
+        [HttpPost]
         public async Task<IActionResult> ManageOrder(Guid orderId, OrderStatus newStatus)
         {
             bool hasAccess = await orderService.OrderCanBeAccessedByCourier(orderId, User.GetId());

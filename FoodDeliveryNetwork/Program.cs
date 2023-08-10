@@ -4,6 +4,7 @@ using FoodDeliveryNetwork.Services.Data;
 using FoodDeliveryNetwork.Services.Data.Contracts;
 using FoodDeliveryNetwork.Web.Binders;
 using FoodDeliveryNetwork.Web.Extensions;
+using FoodDeliveryNetwork.Web.Filters;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -39,7 +40,7 @@ namespace FoodDeliveryNetwork.Web
             builder.Services.AddControllersWithViews(options =>
             {
                 options.ModelBinderProviders.Insert(0, new DecimalModelBinderProvider());
-                options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+                options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());                
             });
 
             builder.Services.AddServerSideBlazor().AddCircuitOptions(o =>

@@ -1,4 +1,5 @@
-﻿using FoodDeliveryNetwork.Data.Models;
+﻿using FoodDeliveryNetwork.Common;
+using FoodDeliveryNetwork.Data.Models;
 using FoodDeliveryNetwork.Services.Data.Contracts;
 using FoodDeliveryNetwork.Web.ViewModels.Admin;
 using Microsoft.AspNetCore.Authorization;
@@ -7,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace FoodDeliveryNetwork.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize]
+    [Authorize(Roles = AppConstants.RoleNames.AdministratorRole)]
     public class AdminController : Controller
     {
         private IOwnerApplicationService ownerApplicationService;

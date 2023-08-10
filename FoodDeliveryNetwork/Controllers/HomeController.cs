@@ -1,13 +1,17 @@
-﻿using FoodDeliveryNetwork.Data.Models;
+﻿using FoodDeliveryNetwork.Common;
+using FoodDeliveryNetwork.Data.Models;
 using FoodDeliveryNetwork.Services.Data.Contracts;
 using FoodDeliveryNetwork.Web.Extensions;
+using FoodDeliveryNetwork.Web.Filters;
 using FoodDeliveryNetwork.Web.Models;
 using FoodDeliveryNetwork.Web.ViewModels.Home;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
 namespace FoodDeliveryNetwork.Web.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         private const int RECENT_ORDERS_HOUR = 6;
@@ -25,6 +29,7 @@ namespace FoodDeliveryNetwork.Web.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> Index([FromQuery] CustomerAllRestaurantsViewModel model)
         {
             var newModel = await restaurantService.GetAllRestaurantsAsync(model);
@@ -40,6 +45,7 @@ namespace FoodDeliveryNetwork.Web.Controllers
         }
 
         [HttpGet]
+        [TypeFilter(typeof(RoleRedirectFilter))]
         public async Task<IActionResult> Restaurant(string id)
         {
             var restaurant = await restaurantService.GetRestaurantByHandleAsync(id);
@@ -50,6 +56,7 @@ namespace FoodDeliveryNetwork.Web.Controllers
         }
 
         [HttpGet]
+        [TypeFilter(typeof(RoleRedirectFilter))]
         public async Task<IActionResult> MyRecentOrders([FromQuery] CustomerAllOrdersViewModel model)
         {
             bool hasRecentOrders = await orderService.UserHasRecentOrders(User.GetId(), RECENT_ORDERS_HOUR);
@@ -60,6 +67,8 @@ namespace FoodDeliveryNetwork.Web.Controllers
             return View(orders);
         }
 
+        [HttpGet]
+        [TypeFilter(typeof(RoleRedirectFilter))]
         public async Task<IActionResult> MyOrders([FromQuery] CustomerAllOrdersViewModel model)
         {
             var orders = await orderService.GetOrdersByCustomerId(model, User.GetId());
@@ -68,6 +77,7 @@ namespace FoodDeliveryNetwork.Web.Controllers
         }
 
         [HttpPost]
+        [TypeFilter(typeof(RoleRedirectFilter))]
         public async Task<IActionResult> CancelOrder(CustomerBasicOrderViewModel model)
         {
             bool orderCanBeCancelled = await orderService.OrderCanBeCancelledByUser(model.Id, User.GetId());
@@ -82,6 +92,7 @@ namespace FoodDeliveryNetwork.Web.Controllers
         }
 
         [HttpGet]
+        [TypeFilter(typeof(RoleRedirectFilter))]
         public async Task<IActionResult> MyAddresses()
         {
             var addresses = await addressService.GetAddressesByUserId(User.GetId());
@@ -95,6 +106,7 @@ namespace FoodDeliveryNetwork.Web.Controllers
         }
 
         [HttpPost]
+        [TypeFilter(typeof(RoleRedirectFilter))]
         public async Task<IActionResult> MyAddresses(AddressPageViewModel model)
         {
             IEnumerable<AddressViewModel> addresses;
@@ -154,6 +166,7 @@ namespace FoodDeliveryNetwork.Web.Controllers
         }
 
         [HttpGet]
+        [TypeFilter(typeof(RoleRedirectFilter))]
         public async Task<IActionResult> OrderDetails(string id)
         {
             if (string.IsNullOrWhiteSpace(id)) return RedirectToAction(nameof(MyRecentOrders));
@@ -173,5 +186,7 @@ namespace FoodDeliveryNetwork.Web.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+
     }
 }

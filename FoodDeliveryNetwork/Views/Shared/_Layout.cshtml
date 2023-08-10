@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using FoodDeliveryNetwork.Common;
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -22,9 +23,36 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
+                        @if (User.IsInRole(AppConstants.RoleNames.AdministratorRole))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="Admin" asp-action="Pending">Admin Panel</a>
+                            </li>
+                        }
+                        else if (User.IsInRole(AppConstants.RoleNames.OwnerRole))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Owner" asp-action="Index">Owner Panel</a>
+                            </li>
+                        }
+                        else if (User.IsInRole(AppConstants.RoleNames.DispatcherRole))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="Staff" asp-controller="Dispatcher" asp-action="Index">Dispatcher Panel</a>
+                            </li>
+                        }
+                        else if (User.IsInRole(AppConstants.RoleNames.CourierRole))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="Staff" asp-controller="Courier" asp-action="Index">Courier Panel</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="MyRecentOrders">My Orders</a>
+                            </li>
+                        }
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>

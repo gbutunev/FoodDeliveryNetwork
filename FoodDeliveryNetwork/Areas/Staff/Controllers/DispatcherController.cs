@@ -1,11 +1,14 @@
-﻿using FoodDeliveryNetwork.Services.Data.Contracts;
+﻿using FoodDeliveryNetwork.Common;
+using FoodDeliveryNetwork.Services.Data.Contracts;
 using FoodDeliveryNetwork.Web.Extensions;
 using FoodDeliveryNetwork.Web.ViewModels.Dispatcher;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FoodDeliveryNetwork.Web.Areas.Staff.Controllers
 {
     [Area("Staff")]
+    [Authorize(Roles = AppConstants.RoleNames.DispatcherRole)]
     public class DispatcherController : Controller
     {
         private readonly IDispatcherService dispatcherService;

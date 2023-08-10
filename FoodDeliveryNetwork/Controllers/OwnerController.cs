@@ -1,4 +1,5 @@
-﻿using FoodDeliveryNetwork.Data.Models;
+﻿using FoodDeliveryNetwork.Common;
+using FoodDeliveryNetwork.Data.Models;
 using FoodDeliveryNetwork.Services.Data.Contracts;
 using FoodDeliveryNetwork.Web.Extensions;
 using FoodDeliveryNetwork.Web.ViewModels.Owner;
@@ -7,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FoodDeliveryNetwork.Web.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = AppConstants.RoleNames.OwnerRole)]
     public class OwnerController : Controller
     {
         private readonly IRestaurantService restaurantService;
