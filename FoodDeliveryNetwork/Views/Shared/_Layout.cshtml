@@ -49,9 +49,12 @@
                         }
                         else
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="MyRecentOrders">My Orders</a>
-                            </li>
+                            @if (Context.User.Identity.IsAuthenticated)
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="MyRecentOrders">My Orders</a>
+                                </li>
+                            }
                         }
                     </ul>
                     <partial name="_LoginPartial" />

@@ -33,8 +33,9 @@ namespace FoodDeliveryNetwork.Web.Views.Home.Blazor
 
         private bool showConfirmOrderPopup = false;
         private bool showAddressPopup = false;
+        private bool hasSavedAddresses = false;
 
-        private AddressPopupMode addressPopupMode = AddressPopupMode.Saved;
+        private AddressPopupMode addressPopupMode = AddressPopupMode.New;
 
         private CustomerBlazorOrderViewModel currentOrder = new CustomerBlazorOrderViewModel();
         private IEnumerable<CustomerOrderDish> restaurantDishes = new HashSet<CustomerOrderDish>();
@@ -59,6 +60,9 @@ namespace FoodDeliveryNetwork.Web.Views.Home.Blazor
 
             currentOrder.RestaurantId = currentRestaurant.Id;
             currentOrder.UserId = UserId;
+
+            bool hasSavedAddresses = customerAddresses != null && customerAddresses.Count > 0;
+            addressPopupMode = hasSavedAddresses ? AddressPopupMode.Saved : AddressPopupMode.New;
         }
 
         private void AddDish(CustomerOrderDish dish)
@@ -101,6 +105,7 @@ namespace FoodDeliveryNetwork.Web.Views.Home.Blazor
         private async Task ShowAddressPopup()
         {
             customerAddresses = (await AddressService.GetAddressesByUserId(UserId)).ToList();
+            hasSavedAddresses = customerAddresses != null && customerAddresses.Count > 0;
 
             showAddressPopup = true;
         }

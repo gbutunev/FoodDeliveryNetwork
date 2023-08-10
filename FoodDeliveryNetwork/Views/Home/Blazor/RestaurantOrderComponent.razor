@@ -100,12 +100,7 @@ else
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick="@HideAddressPopup"></button>
                     </div>
                     <div class="modal-body">
-                        <DataAnnotationsValidator />
-
-                        @{
-                            bool hasSavedAddresses = customerAddresses != null && customerAddresses.Count > 0;
-                            addressPopupMode = hasSavedAddresses ? AddressPopupMode.Saved : AddressPopupMode.New;
-                        }
+                        <DataAnnotationsValidator />                       
 
                         <InputRadioGroup @bind-Value="addressPopupMode" class="mb-2">
                             <InputRadio Value="@AddressPopupMode.Saved" disabled=@(!hasSavedAddresses) />Your adresses
