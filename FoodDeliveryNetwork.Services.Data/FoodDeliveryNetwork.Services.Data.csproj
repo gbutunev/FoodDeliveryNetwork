@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FoodDeliveryNetwork.Data\FoodDeliveryNetwork.Data.csproj" />
+    <ProjectReference Include="..\FoodDeliveryNetwork.SignalR\FoodDeliveryNetwork.SignalR.csproj" />
     <ProjectReference Include="..\FoodDeliveryNetwork.Web.ViewModels\FoodDeliveryNetwork.Web.ViewModels.csproj" />
   </ItemGroup>
 

@@ -24,26 +24,26 @@
             <div class="row">
                 <div class="col">Order status:</div>
                 <div class="col">
-                    <span class="order-status-badge order-status-@Model.OrderStatus.ToString().ToLower()">
+                    <span id="@Model.Id-status-wrapper" class="order-status-badge order-status-@Model.OrderStatus.ToString().ToLower()">
                         @switch (Model.OrderStatus)
                         {
                             case OrderStatus.ReadyForPickup:
-                                <span>Ready for pickup</span>
+                                <span id="@Model.Id-status">Ready for pickup</span>
                                 break;
                             case OrderStatus.OnTheWay:
-                                <span>On the way</span>
+                                <span id="@Model.Id-status">On the way</span>
                                 break;
                             case OrderStatus.CancelledByCustomer:
-                                <span>Cancelled by you</span>
+                                <span id="@Model.Id-status">Cancelled by you</span>
                                 break;
                             case OrderStatus.CancelledByRestaurant:
-                                <span>Cancelled by the restaurant</span>
+                                <span id="@Model.Id-status">Cancelled by the restaurant</span>
                                 break;
                             case OrderStatus.ReturnedToRestaurant:
-                                <span>Returned</span>
+                                <span id="@Model.Id-status">Returned</span>
                                 break;
                             default:
-                                <span>@Model.OrderStatus</span>
+                                <span id="@Model.Id-status">@Model.OrderStatus</span>
                                 break;
                         }
                     </span>

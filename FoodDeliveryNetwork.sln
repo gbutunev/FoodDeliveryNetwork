@@ -15,7 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoodDeliveryNetwork.Service
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoodDeliveryNetwork.Web.ViewModels", "FoodDeliveryNetwork.Web.ViewModels\FoodDeliveryNetwork.Web.ViewModels.csproj", "{B15F418F-12FF-48CC-9CD5-A6BEBD4ED1EB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoodDeliveryNetwork.Services.Tests", "FoodDeliveryNetwork.Services.Tests\FoodDeliveryNetwork.Services.Tests.csproj", "{B3983FC5-A2CF-47C0-A994-8ADB8F639B25}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoodDeliveryNetwork.Services.Tests", "FoodDeliveryNetwork.Services.Tests\FoodDeliveryNetwork.Services.Tests.csproj", "{B3983FC5-A2CF-47C0-A994-8ADB8F639B25}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoodDeliveryNetwork.SignalR", "FoodDeliveryNetwork.SignalR\FoodDeliveryNetwork.SignalR.csproj", "{B8E41528-372D-47E9-9E3D-2C1FB897C1B9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{B3983FC5-A2CF-47C0-A994-8ADB8F639B25}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B3983FC5-A2CF-47C0-A994-8ADB8F639B25}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B3983FC5-A2CF-47C0-A994-8ADB8F639B25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8E41528-372D-47E9-9E3D-2C1FB897C1B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8E41528-372D-47E9-9E3D-2C1FB897C1B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8E41528-372D-47E9-9E3D-2C1FB897C1B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8E41528-372D-47E9-9E3D-2C1FB897C1B9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

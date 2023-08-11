@@ -1,10 +1,12 @@
 ﻿using FoodDeliveryNetwork.Data;
 using FoodDeliveryNetwork.Data.Models;
 using FoodDeliveryNetwork.Services.Data.Contracts;
+using FoodDeliveryNetwork.SignalR;
 using FoodDeliveryNetwork.Web.ViewModels.Common;
 using FoodDeliveryNetwork.Web.ViewModels.Dispatcher;
 using FoodDeliveryNetwork.Web.ViewModels.Home;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace FoodDeliveryNetwork.Services.Data
@@ -13,11 +15,13 @@ namespace FoodDeliveryNetwork.Services.Data
     {
         private readonly ApplicationDbContext dbContext;
         private readonly UserManager<ApplicationUser> userManager;
+        private readonly IHubContext<OrderUpdateHub> hubContext;
 
-        public OrderService(ApplicationDbContext dbContext, UserManager<ApplicationUser> userManager)
+        public OrderService(ApplicationDbContext dbContext, UserManager<ApplicationUser> userManager, IHubContext<OrderUpdateHub> hubContext)
         {
             this.dbContext = dbContext;
             this.userManager = userManager;
+            this.hubContext = hubContext;
         }
 
         public async Task<int> CreateOrder(Order order)
@@ -48,6 +52,9 @@ namespace FoodDeliveryNetwork.Services.Data
             {
                 await dbContext.Orders.AddAsync(order);
                 await dbContext.SaveChangesAsync();
+
+                var userIds = await dbContext.DispatcherToRestaurants.Select(x => x.DispatcherId.ToString().ToLower()).ToArrayAsync();
+                await hubContext.Clients.Users(userIds).SendAsync("UpdateDispatcherView", order.TotalPrice);
 
                 return 1;
             }
@@ -171,7 +178,9 @@ namespace FoodDeliveryNetwork.Services.Data
 
         public async Task<int> ChangeOrderStatus(Guid orderId, OrderStatus newStatus)
         {
-            var order = dbContext.Orders.FirstOrDefault(x => x.Id == orderId);
+            var order = dbContext.Orders
+                .Include(x => x.Restaurant)
+                .FirstOrDefault(x => x.Id == orderId);
 
             if (order is null) return -1;
 
@@ -181,6 +190,14 @@ namespace FoodDeliveryNetwork.Services.Data
                 dbContext.Orders.Update(order);
 
                 await dbContext.SaveChangesAsync();
+
+                await hubContext.Clients.Group(order.CustomerId.ToString()).SendAsync("UpdateCustomerView", order.Id, newStatus.ToString(), order.Restaurant.Name);
+
+                if (newStatus == OrderStatus.ReadyForPickup)
+                {
+                    var userIds = await dbContext.CourierToRestaurants.Where(x => x.RestaurantId == order.RestaurantId).Select(x => x.CourierId.ToString().ToLower()).ToListAsync();
+                    await hubContext.Clients.Users(userIds).SendAsync("UpdateCourierView", order.Restaurant.Name, order.Restaurant.Address, order.Address);
+                }
 
                 return 1;
             }

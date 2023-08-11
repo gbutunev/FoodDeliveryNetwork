@@ -3,6 +3,7 @@ using FoodDeliveryNetwork.Data;
 using FoodDeliveryNetwork.Data.Models;
 using FoodDeliveryNetwork.Services.Data;
 using FoodDeliveryNetwork.Services.Data.Contracts;
+using FoodDeliveryNetwork.SignalR;
 using FoodDeliveryNetwork.Web.Binders;
 using FoodDeliveryNetwork.Web.Extensions;
 using FoodDeliveryNetwork.Web.Filters;
@@ -65,6 +66,8 @@ namespace FoodDeliveryNetwork.Web
 
             builder.Services.AddTransient<IEmailSender, EmailSender>();
 
+            builder.Services.AddSignalR();
+
             builder.Services.AddAuthentication()
                 .AddMicrosoftAccount(microsoftOptions =>
                 {
@@ -118,6 +121,8 @@ namespace FoodDeliveryNetwork.Web
                     pattern: "{controller=Home}/{action=Index}/{id?}");
 
                 endpoints.MapBlazorHub();
+
+                app.MapHub<OrderUpdateHub>("/livedelivery");
             });
 
             app.MapRazorPages();
