@@ -60,6 +60,8 @@ namespace FoodDeliveryNetwork.Web
 
             var app = builder.Build();
 
+            await app.SeedDefaultRoles();
+
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
