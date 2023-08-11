@@ -91,8 +91,20 @@ namespace FoodDeliveryNetwork.Services.Data
             var restaurant = await dbContext.Restaurants.FindAsync(restaurantId);
             if (restaurant is null) return -1;
 
+            Guid nullRestaurantGuid = (await dbContext.Restaurants.FirstOrDefaultAsync(x => x.Handle == AppConstants.NullRestaurant)).Id;
+
+            var orders = await dbContext.Orders.Where(x => x.RestaurantId == restaurantId).ToArrayAsync();
+
             try
             {
+                foreach (var order in orders)
+                {
+                    order.RestaurantId = nullRestaurantGuid;
+                }
+
+                dbContext.Orders.UpdateRange(orders);
+                await dbContext.SaveChangesAsync();
+
                 dbContext.Restaurants.Remove(restaurant);
                 await dbContext.SaveChangesAsync();
 
@@ -170,6 +182,7 @@ namespace FoodDeliveryNetwork.Services.Data
 
             var restaurants = dbContext
                 .Restaurants
+                .Where(x => x.Handle != AppConstants.NullRestaurant)
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(model.SearchTerm))

@@ -2,8 +2,8 @@
 {
     public class AppConstants
     {
-        public static string AppName = "Food Delivery Network";
-
+        public const string AppName = "Food Delivery Network";
+        public const string NullRestaurant = "Deleted_Restaurant";
         public static class RoleNames
         {
             public const string AdministratorRole = "Administrator";

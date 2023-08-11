@@ -131,6 +131,24 @@ namespace FoodDeliveryNetwork.Web.Extensions
                     //only if no password is set
                     await userManager.AddPasswordAsync(courierUser, "courier1");
                 }
+
+                //RESTAURANT - all orders of deleted restaurants should be reassigned to this restaurant
+                var adminId = (await userManager.FindByNameAsync("admin1")).Id;
+                var restaurant = new Restaurant
+                {
+                    Name = AppConstants.NullRestaurant,
+                    Address = AppConstants.NullRestaurant,
+                    PhoneNumber = "0000000000",
+                    Handle = AppConstants.NullRestaurant,
+                    OwnerId = adminId,
+                };
+
+                if (!dbContext.Restaurants.Any(r => r.Name == AppConstants.NullRestaurant))
+                {
+                    dbContext.Restaurants.Add(restaurant);
+                    await dbContext.SaveChangesAsync();
+                }
+
             }
         }
 
