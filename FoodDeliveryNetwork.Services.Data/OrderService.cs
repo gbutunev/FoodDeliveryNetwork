@@ -137,6 +137,8 @@ namespace FoodDeliveryNetwork.Services.Data
             //    })
             //    .ToArrayAsync();
 
+            model.TotalOrders = await ordersQuery.CountAsync();
+
             var orders = await ordersQuery
                 .Include(x => x.Restaurant)
                 .Skip((query.Page - 1) * query.PageSize)
@@ -155,8 +157,6 @@ namespace FoodDeliveryNetwork.Services.Data
                 TotalPrice = x.TotalPrice,
                 TotalItemsCount = x.Dishes.Sum(x => x.Quantity),
             }).ToArray();
-
-            model.TotalOrders = model.Orders.Count();
 
             return model;
         }
@@ -315,6 +315,9 @@ namespace FoodDeliveryNetwork.Services.Data
                     ordersQuery = ordersQuery.OrderBy(x => x.CreatedOn);
                     break;
             }
+
+            model.TotalOrders = await ordersQuery.CountAsync();
+
             var orders = await ordersQuery
                 .Include(x => x.Customer)
                 .Skip((query.Page - 1) * query.PageSize)
@@ -339,8 +342,6 @@ namespace FoodDeliveryNetwork.Services.Data
                     UnitPrice = x.UnitPrice,
                 }).ToArray(),
             }).ToArray();
-
-            model.TotalOrders = model.Orders.Count();
 
             return model;
         }
@@ -381,6 +382,9 @@ namespace FoodDeliveryNetwork.Services.Data
                     ordersQuery = ordersQuery.OrderBy(x => x.CreatedOn);
                     break;
             }
+
+            model.TotalOrders = await ordersQuery.CountAsync();
+
             var orders = await ordersQuery
                 .Include(x => x.Customer)
                 .Skip((query.Page - 1) * query.PageSize)
@@ -405,8 +409,6 @@ namespace FoodDeliveryNetwork.Services.Data
                     UnitPrice = x.UnitPrice,
                 }).ToArray(),
             }).ToArray();
-
-            model.TotalOrders = model.Orders.Count();
 
             return model;
         }

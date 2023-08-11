@@ -153,6 +153,8 @@ namespace FoodDeliveryNetwork.Services.Data
                     break;
             }
 
+            model.TotalApplications = await pendingApplicationsQuery.CountAsync();
+
             IEnumerable<SingleApplicationViewModel> applications = await pendingApplicationsQuery
                 .Skip((query.Page - 1) * query.PageSize)
                 .Take(query.PageSize)
@@ -173,8 +175,6 @@ namespace FoodDeliveryNetwork.Services.Data
             int totalApplications = applications.Count();
 
             model.Applications = applications;
-            model.TotalApplications = totalApplications;
-
             return model;
         }
 

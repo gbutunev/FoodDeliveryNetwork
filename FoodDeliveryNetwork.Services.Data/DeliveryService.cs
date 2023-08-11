@@ -24,33 +24,35 @@ namespace FoodDeliveryNetwork.Services.Data
 
             HashSet<Guid> restaurants = dbContext.CourierToRestaurants.Where(x => x.CourierId.ToString() == userId).Select(x => x.RestaurantId).ToHashSet();
 
-            var r = await dbContext.Orders
+            var r = dbContext.Orders
                             .Include(x => x.Customer)
                             .Include(x => x.Restaurant)
                             .Where(x => restaurants.Contains(x.RestaurantId))
                             .Where(x => x.CourierId == null)
                             .Where(x => x.OrderStatus == OrderStatus.ReadyForPickup)
-                            .ApplyQuery(model.BaseQueryModel)
-                            .Select(x => new SingleOrderViewModel()
-                            {
-                                Id = x.Id,
-                                CreatedOn = x.CreatedOn,
-                                OrderStatus = x.OrderStatus,
-                                TotalPrice = x.TotalPrice,
+                            .ApplySearchQuery(model.BaseQueryModel);
 
-                                CustomerFirstName = x.Customer.FirstName,
-                                CustomerLastName = x.Customer.LastName,
-                                CustomerPhoneNumber = x.Customer.PhoneNumber,
-                                CustomerAddress = x.Address,
+            model.TotalOrders = await r.CountAsync();
 
-                                RestaurantName = x.Restaurant.Name,
-                                RestaurantAddress = x.Restaurant.Address,
-                                RestaurantPhoneNumber = x.Restaurant.PhoneNumber
-                            })
-                            .ToArrayAsync();
+            model.Orders = await r
+                    .ApplyPaginationQuery(model.BaseQueryModel)
+                    .Select(x => new SingleOrderViewModel()
+                    {
+                        Id = x.Id,
+                        CreatedOn = x.CreatedOn,
+                        OrderStatus = x.OrderStatus,
+                        TotalPrice = x.TotalPrice,
 
-            model.Orders = r;
-            model.TotalOrders = r.Length;
+                        CustomerFirstName = x.Customer.FirstName,
+                        CustomerLastName = x.Customer.LastName,
+                        CustomerPhoneNumber = x.Customer.PhoneNumber,
+                        CustomerAddress = x.Address,
+
+                        RestaurantName = x.Restaurant.Name,
+                        RestaurantAddress = x.Restaurant.Address,
+                        RestaurantPhoneNumber = x.Restaurant.PhoneNumber
+                    })
+                    .ToArrayAsync();
 
             return model;
         }
@@ -61,33 +63,35 @@ namespace FoodDeliveryNetwork.Services.Data
 
             HashSet<Guid> restaurants = dbContext.CourierToRestaurants.Where(x => x.CourierId.ToString() == userId).Select(x => x.RestaurantId).ToHashSet();
 
-            var r = await dbContext.Orders
-                            .Include(x => x.Customer)
-                            .Include(x => x.Restaurant)
-                            .Where(x => restaurants.Contains(x.RestaurantId))
-                            .Where(x => x.CourierId.ToString() == userId)
-                            .Where(x => x.OrderStatus == OrderStatus.OnTheWay)
-                            .ApplyQuery(model.BaseQueryModel)
-                            .Select(x => new SingleOrderViewModel()
-                            {
-                                Id = x.Id,
-                                CreatedOn = x.CreatedOn,
-                                OrderStatus = x.OrderStatus,
-                                TotalPrice = x.TotalPrice,
+            var r = dbContext.Orders
+                .Include(x => x.Customer)
+                .Include(x => x.Restaurant)
+                .Where(x => restaurants.Contains(x.RestaurantId))
+                .Where(x => x.CourierId.ToString() == userId)
+                .Where(x => x.OrderStatus == OrderStatus.OnTheWay)
+                .ApplySearchQuery(model.BaseQueryModel);
 
-                                CustomerFirstName = x.Customer.FirstName,
-                                CustomerLastName = x.Customer.LastName,
-                                CustomerPhoneNumber = x.Customer.PhoneNumber,
-                                CustomerAddress = x.Address,
+            model.TotalOrders = await r.CountAsync();
 
-                                RestaurantName = x.Restaurant.Name,
-                                RestaurantAddress = x.Restaurant.Address,
-                                RestaurantPhoneNumber = x.Restaurant.PhoneNumber
-                            })
-                            .ToArrayAsync();
+            model.Orders = await r
+                .ApplyPaginationQuery(model.BaseQueryModel)
+                .Select(x => new SingleOrderViewModel()
+                {
+                    Id = x.Id,
+                    CreatedOn = x.CreatedOn,
+                    OrderStatus = x.OrderStatus,
+                    TotalPrice = x.TotalPrice,
 
-            model.Orders = r;
-            model.TotalOrders = r.Length;
+                    CustomerFirstName = x.Customer.FirstName,
+                    CustomerLastName = x.Customer.LastName,
+                    CustomerPhoneNumber = x.Customer.PhoneNumber,
+                    CustomerAddress = x.Address,
+
+                    RestaurantName = x.Restaurant.Name,
+                    RestaurantAddress = x.Restaurant.Address,
+                    RestaurantPhoneNumber = x.Restaurant.PhoneNumber
+                })
+                .ToArrayAsync();
 
             return model;
         }
@@ -98,33 +102,36 @@ namespace FoodDeliveryNetwork.Services.Data
 
             HashSet<Guid> restaurants = dbContext.CourierToRestaurants.Where(x => x.CourierId.ToString() == userId).Select(x => x.RestaurantId).ToHashSet();
 
-            var r = await dbContext.Orders
-                            .Include(x => x.Customer)
-                            .Include(x => x.Restaurant)
-                            .Where(x => restaurants.Contains(x.RestaurantId))
-                            .Where(x => x.CourierId.ToString() == userId)
-                            .Where(x => x.OrderStatus != OrderStatus.OnTheWay)
-                            .ApplyQuery(model.BaseQueryModel)
-                            .Select(x => new SingleOrderViewModel()
-                            {
-                                Id = x.Id,
-                                CreatedOn = x.CreatedOn,
-                                OrderStatus = x.OrderStatus,
-                                TotalPrice = x.TotalPrice,
+            var r = dbContext.Orders
+                .Include(x => x.Customer)
+                .Include(x => x.Restaurant)
+                .Where(x => restaurants.Contains(x.RestaurantId))
+                .Where(x => x.CourierId.ToString() == userId)
+                .Where(x => x.OrderStatus != OrderStatus.OnTheWay)
+                .ApplySearchQuery(model.BaseQueryModel);
 
-                                CustomerFirstName = x.Customer.FirstName,
-                                CustomerLastName = x.Customer.LastName,
-                                CustomerPhoneNumber = x.Customer.PhoneNumber,
-                                CustomerAddress = x.Address,
+            model.TotalOrders = await r.CountAsync();
 
-                                RestaurantName = x.Restaurant.Name,
-                                RestaurantAddress = x.Restaurant.Address,
-                                RestaurantPhoneNumber = x.Restaurant.PhoneNumber
-                            })
-                            .ToArrayAsync();
+            model.Orders = await r
+                .ApplyPaginationQuery(model.BaseQueryModel)
+                .Select(x => new SingleOrderViewModel()
+                {
+                    Id = x.Id,
+                    CreatedOn = x.CreatedOn,
+                    OrderStatus = x.OrderStatus,
+                    TotalPrice = x.TotalPrice,
 
-            model.Orders = r;
-            model.TotalOrders = r.Length;
+                    CustomerFirstName = x.Customer.FirstName,
+                    CustomerLastName = x.Customer.LastName,
+                    CustomerPhoneNumber = x.Customer.PhoneNumber,
+                    CustomerAddress = x.Address,
+
+                    RestaurantName = x.Restaurant.Name,
+                    RestaurantAddress = x.Restaurant.Address,
+                    RestaurantPhoneNumber = x.Restaurant.PhoneNumber
+                })
+                .ToArrayAsync();
+
 
             return model;
         }
@@ -132,7 +139,7 @@ namespace FoodDeliveryNetwork.Services.Data
 
     public static class TestExtensions
     {
-        public static IQueryable<T> ApplyQuery<T>(this IQueryable<T> query, BaseQueryModel model) where T : Order
+        public static IQueryable<T> ApplySearchQuery<T>(this IQueryable<T> query, BaseQueryModel model) where T : Order
         {
             model ??= new();
 
@@ -159,6 +166,13 @@ namespace FoodDeliveryNetwork.Services.Data
                     query = query.OrderBy(x => x.CreatedOn);
                     break;
             }
+
+            return query;
+        }
+
+        public static IQueryable<T> ApplyPaginationQuery<T>(this IQueryable<T> query, BaseQueryModel model) where T : Order
+        {
+            model ??= new();
 
             query = query
                 .Skip((model.Page - 1) * model.PageSize)

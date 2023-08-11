@@ -197,6 +197,8 @@ namespace FoodDeliveryNetwork.Services.Data
                     break;
             }
 
+            model.TotalRestaurants = await restaurants.CountAsync();
+
             IEnumerable<CustomerRestaurantViewModel> restaurantsToReturn = await restaurants
                 .Skip((query.Page - 1) * query.PageSize)
                 .Take(query.PageSize)
@@ -215,7 +217,6 @@ namespace FoodDeliveryNetwork.Services.Data
             int totalRestaurants = restaurantsToReturn.Count();
 
             model.Restaurants = restaurantsToReturn;
-            model.TotalRestaurants = totalRestaurants;
 
             return model;
         }
