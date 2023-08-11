@@ -53,6 +53,7 @@ namespace FoodDeliveryNetwork.Services.Data
                 {
                     //0. check if user is already in a role
                     var userRoles = await userManager.GetRolesAsync(application.ApplicationUser);
+                                        
                     if (userRoles.Count > 0)
                         return -3;
 

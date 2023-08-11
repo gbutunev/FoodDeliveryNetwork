@@ -13,6 +13,16 @@ namespace FoodDeliveryNetwork.Data.Configurations
                 ownedNavigationBuilder.ToJson();
             });
 
+            //builder.OwnsMany(x => x.Dishes, ownedNavigationBuilder =>
+            //{
+            //    ownedNavigationBuilder.Property<string>("Dishes")
+            //         .HasColumnName("Dishes")
+            //         .HasConversion(
+            //             dishes => JsonSerializer.Serialize(dishes),
+            //             json => JsonSerializer.Deserialize<IEnumerable<OrderDish>>(json, null)
+            //         );
+            //});
+
             builder.HasOne(x => x.Restaurant)
                 .WithMany()
                 .OnDelete(DeleteBehavior.NoAction);
