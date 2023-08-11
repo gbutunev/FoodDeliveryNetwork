@@ -8,27 +8,30 @@
 }
 
 @*Search bar*@
-@using (Html.BeginForm("Index", "Courier", FormMethod.Get, new { @class = "row gy-2 gx-3 align-items-center mb-5" }))
-{
-    <div class="col-auto">
-        @Html.TextBoxFor(m => m.SearchTerm, new { @class = "form-control", placeholder = "Search" })
-    </div>
+<div class="d-flex w-100">
+    @using (Html.BeginForm("Index", "Courier", FormMethod.Get, new { @class = "ms-auto" }))
+    {
+        <div class="row mb-4">
+            <div class="col-auto pe-1">
+                @Html.TextBoxFor(m => m.SearchTerm, new { @class = "form-control", placeholder = "Search" })
+            </div>
 
-    <div class="col-auto">
-        @Html.Label("Sort by:", "Sort by:", new { @class = "visually-hidden", @for = "p1"})
-        @Html.DropDownListFor(m => m.SortBy, new SelectList(new [] {BaseQueryModelSort.Oldest, BaseQueryModelSort.Newest}), new { @class = "form-select", @id = "p1" })
-    </div>
+            <div class="col-auto px-1">
+                @Html.Label("Sort by:", "Sort by:", new { @class = "visually-hidden", @for = "p1"})
+                @Html.DropDownListFor(m => m.SortBy, new SelectList(new [] {BaseQueryModelSort.Oldest, BaseQueryModelSort.Newest}), new { @class = "form-select", @id = "p1" })
+            </div>
 
-    <div class="col-auto">
-        @Html.Label("Per Page:", "Per Page:", new { @class = "visually-hidden", @for = "p2"})
-        @Html.DropDownListFor(m => m.PageSize, new SelectList(new[] { 5, 20, 50, 100 }), new { @class = "form-select", @id = "p2"  })
-    </div>
+            <div class="col-auto px-1">
+                @Html.Label("Per Page:", "Per Page:", new { @class = "visually-hidden", @for = "p2"})
+                @Html.DropDownListFor(m => m.PageSize, new SelectList(new[] { 5, 20, 50, 100 }), new { @class = "form-select", @id = "p2"  })
+            </div>
 
-    //TODO: align button
-    <div class="col-auto">
-        <button type="submit" class="btn btn-primary mb-2">Search</button>
-    </div>
-}
+            <div class="col-auto ps-1">
+                <button type="submit" class="btn btn-primary mb-2">Search</button>
+            </div>
+        </div>
+    }
+</div>
 
 @if (Model.TotalOrders == 0)
 {
