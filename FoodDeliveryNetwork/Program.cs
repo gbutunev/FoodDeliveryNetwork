@@ -5,7 +5,9 @@ using FoodDeliveryNetwork.Services.Data.Contracts;
 using FoodDeliveryNetwork.Web.Binders;
 using FoodDeliveryNetwork.Web.Extensions;
 using FoodDeliveryNetwork.Web.Filters;
+using FoodDeliveryNetwork.Web.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -57,6 +59,15 @@ namespace FoodDeliveryNetwork.Web
             builder.Services.AddScoped<IOrderService, OrderService>();
             builder.Services.AddScoped<IDeliveryService, DeliveryService>();
             builder.Services.AddScoped<IPictureService, PictureService>();
+
+            builder.Services.AddTransient<IEmailSender, EmailSender>();
+
+            builder.Services.AddAuthentication()
+                .AddMicrosoftAccount(microsoftOptions =>
+                {
+                    microsoftOptions.ClientId = builder.Configuration["Authentication:Microsoft:ClientId"];
+                    microsoftOptions.ClientSecret = builder.Configuration["Authentication:Microsoft:ClientSecret"];
+                });
 
             var app = builder.Build();
 
