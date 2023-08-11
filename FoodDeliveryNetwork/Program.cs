@@ -67,6 +67,11 @@ namespace FoodDeliveryNetwork.Web
                 {
                     microsoftOptions.ClientId = builder.Configuration["Authentication:Microsoft:ClientId"];
                     microsoftOptions.ClientSecret = builder.Configuration["Authentication:Microsoft:ClientSecret"];
+                })
+                .AddGoogle(googleOptions =>
+                {
+                    googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+                    googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
                 });
 
             var app = builder.Build();
