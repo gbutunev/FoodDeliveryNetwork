@@ -85,8 +85,14 @@ namespace FoodDeliveryNetwork.Web.Controllers
             if (!orderCanBeCancelled) return RedirectToAction(nameof(MyRecentOrders));
 
             int r = await orderService.ChangeOrderStatus(model.Id, OrderStatus.CancelledByCustomer);
-
-            //TODO: Add notification
+            if (r == 1)
+            {
+                TempData[AppConstants.NotificationTypes.InfoMessage] = $"Order was cancelled.";
+            }
+            else
+            {
+                TempData[AppConstants.NotificationTypes.ErrorMessage] = $"A problem occurred while cancelling the order.";
+            }
 
             return RedirectToAction(nameof(MyRecentOrders));
         }
@@ -130,7 +136,15 @@ namespace FoodDeliveryNetwork.Web.Controllers
                 bool userOwnsAddress = await addressService.UserOwnsAddress(User.GetId(), model.AddressIdToBeDeleted.Value);
                 if (userOwnsAddress)
                 {
-                    await addressService.DeleteAddressById(model.AddressIdToBeDeleted.Value);
+                    int r = await addressService.DeleteAddressById(model.AddressIdToBeDeleted.Value);
+                    if (r == 1)
+                    {
+                        TempData[AppConstants.NotificationTypes.InfoMessage] = "Address is deleted.";
+                    }
+                    else
+                    {
+                        TempData[AppConstants.NotificationTypes.ErrorMessage] = "Error while deleting the address.";
+                    }
                 }
 
                 addresses = await addressService.GetAddressesByUserId(User.GetId());
@@ -148,14 +162,15 @@ namespace FoodDeliveryNetwork.Web.Controllers
 
                 int r = await addressService.CreateAddress(customerAddress);
 
-                //TODO: Add notification
                 switch (r)
                 {
                     case 1:
                         addresses = await addressService.GetAddressesByUserId(User.GetId());
                         model.Addresses = addresses;
+                        TempData[AppConstants.NotificationTypes.SuccessMessage] = "Address is created.";
                         return View(model);
                     default:
+                        TempData[AppConstants.NotificationTypes.ErrorMessage] = "Error while adding the address.";
                         break;
                 }
             }

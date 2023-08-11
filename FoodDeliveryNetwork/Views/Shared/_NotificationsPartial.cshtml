@@ -1,0 +1,23 @@
+﻿@*https://github.com/KrIsKa7a/CSharpWeb-May2023/blob/f6528f73fcef612a9d1d90f9a71ba85b0f43e10d/ASP.NET%20Advanced/HouseRentingSystem.Web/Views/Shared/_NotificationsPartial.cshtml#L5*@
+
+@using FoodDeliveryNetwork.Common;
+
+@if (TempData.ContainsKey(AppConstants.NotificationTypes.ErrorMessage))
+{
+    <script>toastr.error('@TempData[AppConstants.NotificationTypes.ErrorMessage]');</script>
+}
+
+@if (TempData.ContainsKey(AppConstants.NotificationTypes.WarningMessage))
+{
+    <script>toastr.warning('@TempData[AppConstants.NotificationTypes.WarningMessage]');</script>
+}
+
+@if (TempData.ContainsKey(AppConstants.NotificationTypes.InfoMessage))
+{
+    <script>toastr.info('@TempData[AppConstants.NotificationTypes.InfoMessage]');</script>
+}
+
+@if (TempData.ContainsKey(AppConstants.NotificationTypes.SuccessMessage))
+{
+    <script>toastr.success('@TempData[AppConstants.NotificationTypes.SuccessMessage]');</script>
+}

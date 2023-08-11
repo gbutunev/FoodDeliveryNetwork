@@ -1,4 +1,5 @@
-﻿using FoodDeliveryNetwork.Data.Models;
+﻿using FoodDeliveryNetwork.Common;
+using FoodDeliveryNetwork.Data.Models;
 using FoodDeliveryNetwork.Services.Data.Contracts;
 using FoodDeliveryNetwork.Web.Extensions;
 using FoodDeliveryNetwork.Web.ViewModels.OwnerApplication;
@@ -67,6 +68,8 @@ namespace FoodDeliveryNetwork.Web.Controllers
                 ModelState.AddModelError(string.Empty, "There was an unexpected error. Please try again or contact an administrator if the problem persists");
                 return View(viewModel);
             }
+
+            TempData[AppConstants.NotificationTypes.SuccessMessage] = "Application was sent successfully.";
 
             return RedirectToAction("Index", "Home");
         }

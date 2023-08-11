@@ -38,7 +38,7 @@ else
                     <td>@user.LastName</td>
                     <td>@user.Email</td>
                     <td>
-                        <form action="@Url.Action("ManageDispatchers", "Owner")" method="post">
+                        <form action="@Url.Action("ManageCouriers", "Owner")" method="post">
                             @Html.AntiForgeryToken()
                             @Html.Hidden(nameof(Model.CourierIdToBeDeleted), user.UserGuid)
                             <button type="submit" class="btn btn-outline-danger">Delete</button>

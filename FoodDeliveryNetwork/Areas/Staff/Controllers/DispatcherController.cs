@@ -52,7 +52,15 @@ namespace FoodDeliveryNetwork.Web.Areas.Staff.Controllers
                 bool canCancel = await orderService.OrderCanBeCancelledByDispatcher(model.OrderId);
                 if (canCancel)
                 {
-                    await orderService.ChangeOrderStatus(model.OrderId, model.NewStatus);
+                    var r = await orderService.ChangeOrderStatus(model.OrderId, model.NewStatus);
+                    if (r == 1)
+                    {
+                        TempData[AppConstants.NotificationTypes.SuccessMessage] = "Order status is successfully changed.";
+                    }
+                    else
+                    {
+                        TempData[AppConstants.NotificationTypes.ErrorMessage] = "Error while changing the status.";
+                    }
                 }
             }
             else
@@ -60,7 +68,15 @@ namespace FoodDeliveryNetwork.Web.Areas.Staff.Controllers
                 bool canChange = await orderService.OrderStatusCanBeChangedByDispatcher(model.OrderId, model.NewStatus);
                 if (canChange)
                 {
-                    await orderService.ChangeOrderStatus(model.OrderId, model.NewStatus);
+                    var r = await orderService.ChangeOrderStatus(model.OrderId, model.NewStatus);
+                    if (r == 1)
+                    {
+                        TempData[AppConstants.NotificationTypes.SuccessMessage] = "Order status is successfully changed.";
+                    }
+                    else
+                    {
+                        TempData[AppConstants.NotificationTypes.ErrorMessage] = "Error while changing the status.";
+                    }
                 }
             }
 

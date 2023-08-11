@@ -11,5 +11,13 @@
             public const string CourierRole = "Courier";
             public const string DispatcherRole = "Dispatcher";
         }
+
+        public static class NotificationTypes
+        {
+            public const string ErrorMessage = "error";
+            public const string SuccessMessage = "success";
+            public const string WarningMessage = "warning";
+            public const string InfoMessage = "info";
+        }
     }
 }

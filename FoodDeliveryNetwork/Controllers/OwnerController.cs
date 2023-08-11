@@ -76,6 +76,9 @@ namespace FoodDeliveryNetwork.Web.Controllers
 
             if (r == 1)
             {
+
+                TempData[AppConstants.NotificationTypes.SuccessMessage] = "Restaurant successfully added.";
+
                 return RedirectToAction(nameof(Index));
             }
             else
@@ -114,6 +117,14 @@ namespace FoodDeliveryNetwork.Web.Controllers
             if (userIsOwner)
             {
                 int r = await restaurantService.DeleteRestaurantAsync(restaurantId);
+                if (r == 1)
+                {
+                    TempData[AppConstants.NotificationTypes.InfoMessage] = "Restaurant is deleted.";
+                }
+                else
+                {
+                    TempData[AppConstants.NotificationTypes.ErrorMessage] = "Error while deleting the restaurant.";
+                }
             }
 
             return RedirectToAction(nameof(Index));
@@ -177,6 +188,8 @@ namespace FoodDeliveryNetwork.Web.Controllers
 
             if (r == 1)
             {
+                TempData[AppConstants.NotificationTypes.SuccessMessage] = "Restaurant successfully edited.";
+
                 return RedirectToAction(nameof(Index));
             }
             else
@@ -249,7 +262,8 @@ namespace FoodDeliveryNetwork.Web.Controllers
                 switch (r)
                 {
                     case 1:
-                        //TODO: Add success message
+                        TempData[AppConstants.NotificationTypes.SuccessMessage] = "Dispatcher successfully added.";
+
                         break;
                     case 0:
                     case -1:
@@ -279,7 +293,8 @@ namespace FoodDeliveryNetwork.Web.Controllers
                 switch (r)
                 {
                     case 1:
-                        //TODO: Add success message
+                        TempData[AppConstants.NotificationTypes.InfoMessage] = "Dispatcher removed.";
+
                         break;
                     case 0:
                     case -1:
@@ -348,7 +363,8 @@ namespace FoodDeliveryNetwork.Web.Controllers
                 switch (r)
                 {
                     case 1:
-                        //TODO: Add success message
+                        TempData[AppConstants.NotificationTypes.SuccessMessage] = "Courier successfully added.";
+
                         break;
                     case 0:
                     case -1:
@@ -375,7 +391,8 @@ namespace FoodDeliveryNetwork.Web.Controllers
                 switch (r)
                 {
                     case 1:
-                        //TODO: Add success message
+                        TempData[AppConstants.NotificationTypes.InfoMessage] = "Courier removed.";
+
                         break;
                     case 0:
                     case -1:
@@ -468,6 +485,8 @@ namespace FoodDeliveryNetwork.Web.Controllers
             switch (r)
             {
                 case 1:
+                    TempData[AppConstants.NotificationTypes.SuccessMessage] = "Dish successfully added.";
+
                     return RedirectToAction(nameof(ManageDishes), new { id });
                 case 0:
                     ModelState.AddModelError("", "Something went wrong!");
@@ -540,6 +559,8 @@ namespace FoodDeliveryNetwork.Web.Controllers
                     ModelState.AddModelError("", "Something went wrong!");
                     return View(nameof(EditDish), model);
                 case 1:
+                    TempData[AppConstants.NotificationTypes.SuccessMessage] = "Dish successfully edited.";
+
                     return RedirectToAction(nameof(ManageDishes), new { id = model.RestaurantId });
                 default:
                     throw new NotImplementedException();
@@ -554,18 +575,18 @@ namespace FoodDeliveryNetwork.Web.Controllers
 
             int r = await dishService.DeleteDishAsync(model);
 
-            //TODO: success/error messages
             switch (r)
             {
                 case 1:
-                    return RedirectToAction(nameof(ManageDishes), new { id = model.RestaurantId });
+                    TempData[AppConstants.NotificationTypes.InfoMessage] = "Dish successfully deleted.";
+                    break;
                 case 0:
-                    return RedirectToAction(nameof(ManageDishes), new { id = model.RestaurantId });
                 case -1:
-                    return RedirectToAction(nameof(ManageDishes), new { id = model.RestaurantId });
                 default:
-                    throw new NotImplementedException();
+                    TempData[AppConstants.NotificationTypes.ErrorMessage] = "Error while deleting the dish.";
+                    break;
             }
+            return RedirectToAction(nameof(ManageDishes), new { id = model.RestaurantId });
         }
     }
 }

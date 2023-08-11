@@ -57,9 +57,26 @@ namespace FoodDeliveryNetwork.Web.Areas.Staff.Controllers
                 if (newStatus == OrderStatus.OnTheWay)
                 {
                     int r = await orderService.AssignCourierToOrder(User.GetId(), orderId);
+                    //technically will always be overwritten, but will leave it for future changes
+                    if (r == 1)
+                    {
+                        TempData[AppConstants.NotificationTypes.SuccessMessage] = "Order is successfully assigned.";
+                    }
+                    else
+                    {
+                        TempData[AppConstants.NotificationTypes.ErrorMessage] = "Error while assigning the order.";
+                    }
                 }
 
                 int r2 = await orderService.ChangeOrderStatus(orderId, newStatus);
+                if (r2 == 1)
+                {
+                    TempData[AppConstants.NotificationTypes.SuccessMessage] = "Order status is successfully changed.";
+                }
+                else
+                {
+                    TempData[AppConstants.NotificationTypes.ErrorMessage] = "Error while changing the order status.";
+                }
             }
 
             return RedirectToAction("Assigned", "Courier", new { area = "Staff" });

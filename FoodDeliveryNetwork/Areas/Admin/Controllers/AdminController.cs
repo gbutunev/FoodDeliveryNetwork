@@ -50,7 +50,16 @@ namespace FoodDeliveryNetwork.Web.Areas.Admin.Controllers
 
             int r = await ownerApplicationService.ChangeApplicationStatusAsync(model.Id, model.NewStatus);
 
-            //TempData["result"] = r;
+            string messageVerb = model.NewStatus == OwnerApplicationStatus.Approved ? "approved" : "rejected";
+
+            if (r==1)
+            {
+                TempData[AppConstants.NotificationTypes.InfoMessage] = $"Application successfully {messageVerb}.";
+            }
+            else
+            {
+                TempData[AppConstants.NotificationTypes.ErrorMessage] = $"Problem with setting status of application.";
+            }
 
             return Redirect(nameof(Pending));
         }
