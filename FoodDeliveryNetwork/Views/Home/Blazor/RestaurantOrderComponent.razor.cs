@@ -1,5 +1,4 @@
 ﻿using FoodDeliveryNetwork.Data.Models;
-using FoodDeliveryNetwork.Services.Data;
 using FoodDeliveryNetwork.Services.Data.Contracts;
 using FoodDeliveryNetwork.Web.ViewModels.Home;
 using Microsoft.AspNetCore.Components;
@@ -63,6 +62,11 @@ namespace FoodDeliveryNetwork.Web.Views.Home.Blazor
 
             bool hasSavedAddresses = customerAddresses != null && customerAddresses.Count > 0;
             addressPopupMode = hasSavedAddresses ? AddressPopupMode.Saved : AddressPopupMode.New;
+
+            if (hasSavedAddresses)
+            {
+                customerAddresses.Insert(0, new AddressViewModel() { Address = "", Id = 0 });
+            }
         }
 
         private void AddDish(CustomerOrderDish dish)
@@ -106,6 +110,11 @@ namespace FoodDeliveryNetwork.Web.Views.Home.Blazor
         {
             customerAddresses = (await AddressService.GetAddressesByUserId(UserId)).ToList();
             hasSavedAddresses = customerAddresses != null && customerAddresses.Count > 0;
+
+            if (hasSavedAddresses)
+            {
+                customerAddresses.Insert(0, new AddressViewModel() { Address = "", Id = 0 });
+            }
 
             showAddressPopup = true;
         }

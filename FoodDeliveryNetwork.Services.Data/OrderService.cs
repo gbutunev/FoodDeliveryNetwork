@@ -84,38 +84,41 @@ namespace FoodDeliveryNetwork.Services.Data
             //if not null - get orders from the last x hours
 
             model ??= new();
-            model.BaseQueryModel ??= new();
 
-            var query = model.BaseQueryModel;
-
-            var ordersQuery = dbContext.Orders.AsQueryable();
+            var ordersQuery = dbContext.Orders
+                .Include(x => x.Restaurant)
+                .AsQueryable();
 
             ordersQuery = ordersQuery.Where(x => x.CustomerId.ToString() == userId);
 
-            if (hoursPrior is not null && hoursPrior > 0)
-            {
-                ordersQuery = ordersQuery.Where(x => x.CreatedOn >= DateTime.Now - TimeSpan.FromHours(hoursPrior.Value));
-            }
+            //apparently this has problems with the query translation
 
-            if (!string.IsNullOrWhiteSpace(query.SearchTerm))
+            if (!string.IsNullOrWhiteSpace(model.SearchTerm))
             {
-                var wildcard = $"%{query.SearchTerm.ToLower()}%";
+                var wildcard = $"%{model.SearchTerm.ToLower()}%";
 
                 ordersQuery = ordersQuery
                     .Where(x => EF.Functions.Like(x.Restaurant.Name.ToLower(), wildcard) ||
                                 EF.Functions.Like(x.Restaurant.Handle.ToLower(), wildcard));
             }
 
-            switch (query.SortBy)
+            var materialized = ordersQuery.AsEnumerable();
+
+            if (hoursPrior is not null && hoursPrior > 0)
+            {
+                materialized = materialized.Where(x => x.CreatedOn >= DateTime.Now - TimeSpan.FromHours(hoursPrior.Value));
+            }
+
+            switch (model.SortBy)
             {
                 case BaseQueryModelSort.Newest:
-                    ordersQuery = ordersQuery.OrderByDescending(x => x.CreatedOn);
+                    materialized = materialized.OrderByDescending(x => x.CreatedOn);
                     break;
                 case BaseQueryModelSort.Oldest:
-                    ordersQuery = ordersQuery.OrderBy(x => x.CreatedOn);
+                    materialized = materialized.OrderBy(x => x.CreatedOn);
                     break;
                 default:
-                    ordersQuery = ordersQuery.OrderByDescending(x => x.CreatedOn);
+                    materialized = materialized.OrderByDescending(x => x.CreatedOn);
                     break;
             }
 
@@ -137,15 +140,13 @@ namespace FoodDeliveryNetwork.Services.Data
             //    })
             //    .ToArrayAsync();
 
-            model.TotalOrders = await ordersQuery.CountAsync();
+            model.TotalOrders = materialized.Count();
 
-            var orders = await ordersQuery
-                .Include(x => x.Restaurant)
-                .Skip((query.Page - 1) * query.PageSize)
-                .Take(query.PageSize)
-                .ToArrayAsync();
+            materialized = materialized
+                .Skip((model.Page - 1) * model.PageSize)
+                .Take(model.PageSize);
 
-            model.Orders = orders.Select(x => new CustomerBasicOrderViewModel
+            model.Orders = materialized.Select(x => new CustomerBasicOrderViewModel
             {
                 Id = x.Id,
                 Address = x.Address,
@@ -282,9 +283,7 @@ namespace FoodDeliveryNetwork.Services.Data
         public async Task<AllOrdersViewModel> GetAllActiveOrdersByRestaurantId(Guid restaurantId, AllOrdersViewModel model)
         {
             model ??= new();
-            model.BaseQueryModel ??= new();
 
-            var query = model.BaseQueryModel;
             var ordersQuery = dbContext.Orders.AsQueryable();
 
             ordersQuery = ordersQuery.Where(x => x.RestaurantId == restaurantId);
@@ -292,9 +291,9 @@ namespace FoodDeliveryNetwork.Services.Data
                                                  x.OrderStatus == OrderStatus.Cooking ||
                                                  x.OrderStatus == OrderStatus.ReadyForPickup);
 
-            if (!string.IsNullOrWhiteSpace(query.SearchTerm))
+            if (!string.IsNullOrWhiteSpace(model.SearchTerm))
             {
-                var wildcard = $"%{query.SearchTerm.ToLower()}%";
+                var wildcard = $"%{model.SearchTerm.ToLower()}%";
 
                 ordersQuery = ordersQuery
                     .Where(x => EF.Functions.Like(x.Customer.PhoneNumber.ToLower(), wildcard) ||
@@ -303,7 +302,7 @@ namespace FoodDeliveryNetwork.Services.Data
                                 EF.Functions.Like(x.Customer.LastName.ToLower(), wildcard));
             }
 
-            switch (query.SortBy)
+            switch (model.SortBy)
             {
                 case BaseQueryModelSort.Newest:
                     ordersQuery = ordersQuery.OrderByDescending(x => x.CreatedOn);
@@ -320,8 +319,8 @@ namespace FoodDeliveryNetwork.Services.Data
 
             var orders = await ordersQuery
                 .Include(x => x.Customer)
-                .Skip((query.Page - 1) * query.PageSize)
-                .Take(query.PageSize)
+                .Skip((model.Page - 1) * model.PageSize)
+                .Take(model.PageSize)
                 .ToArrayAsync();
 
             model.Orders = orders.Select(x => new SingleOrderViewModel
@@ -349,9 +348,7 @@ namespace FoodDeliveryNetwork.Services.Data
         public async Task<AllOrdersViewModel> GetAllArchivedOrdersByRestaurantId(Guid currentRestaurant, AllOrdersViewModel model)
         {
             model ??= new();
-            model.BaseQueryModel ??= new();
 
-            var query = model.BaseQueryModel;
             var ordersQuery = dbContext.Orders.AsQueryable();
 
             ordersQuery = ordersQuery.Where(x => x.RestaurantId == currentRestaurant);
@@ -359,9 +356,9 @@ namespace FoodDeliveryNetwork.Services.Data
                                                  x.OrderStatus != OrderStatus.Cooking &&
                                                  x.OrderStatus != OrderStatus.ReadyForPickup);
 
-            if (!string.IsNullOrWhiteSpace(query.SearchTerm))
+            if (!string.IsNullOrWhiteSpace(model.SearchTerm))
             {
-                var wildcard = $"%{query.SearchTerm.ToLower()}%";
+                var wildcard = $"%{model.SearchTerm.ToLower()}%";
 
                 ordersQuery = ordersQuery
                     .Where(x => EF.Functions.Like(x.Customer.PhoneNumber.ToLower(), wildcard) ||
@@ -370,7 +367,7 @@ namespace FoodDeliveryNetwork.Services.Data
                                 EF.Functions.Like(x.Customer.LastName.ToLower(), wildcard));
             }
 
-            switch (query.SortBy)
+            switch (model.SortBy)
             {
                 case BaseQueryModelSort.Newest:
                     ordersQuery = ordersQuery.OrderByDescending(x => x.CreatedOn);
@@ -387,8 +384,8 @@ namespace FoodDeliveryNetwork.Services.Data
 
             var orders = await ordersQuery
                 .Include(x => x.Customer)
-                .Skip((query.Page - 1) * query.PageSize)
-                .Take(query.PageSize)
+                .Skip((model.Page - 1) * model.PageSize)
+                .Take(model.PageSize)
                 .ToArrayAsync();
 
             model.Orders = orders.Select(x => new SingleOrderViewModel

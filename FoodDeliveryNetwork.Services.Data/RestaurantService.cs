@@ -168,15 +168,13 @@ namespace FoodDeliveryNetwork.Services.Data
         {
             model ??= new();
 
-            var query = model.BaseQueryModel;
-
             var restaurants = dbContext
                 .Restaurants
                 .AsQueryable();
 
-            if (!string.IsNullOrWhiteSpace(query.SearchTerm))
+            if (!string.IsNullOrWhiteSpace(model.SearchTerm))
             {
-                var wildcard = $"%{query.SearchTerm.ToLower()}%";
+                var wildcard = $"%{model.SearchTerm.ToLower()}%";
 
                 restaurants = restaurants.Where(x =>
                     EF.Functions.Like(x.Name.ToLower(), wildcard) ||
@@ -184,7 +182,7 @@ namespace FoodDeliveryNetwork.Services.Data
                     EF.Functions.Like(x.PhoneNumber.ToLower(), wildcard));
             }
 
-            switch (query.SortBy)
+            switch (model.SortBy)
             {
                 case Web.ViewModels.Common.BaseQueryModelSort.Name:
                     restaurants = restaurants.OrderBy(x => x.Name);
@@ -200,8 +198,8 @@ namespace FoodDeliveryNetwork.Services.Data
             model.TotalRestaurants = await restaurants.CountAsync();
 
             IEnumerable<CustomerRestaurantViewModel> restaurantsToReturn = await restaurants
-                .Skip((query.Page - 1) * query.PageSize)
-                .Take(query.PageSize)
+                .Skip((model.Page - 1) * model.PageSize)
+                .Take(model.PageSize)
                 .Select(x => new CustomerRestaurantViewModel
                 {
                     Id = x.Id,

@@ -2,9 +2,8 @@
 
 namespace FoodDeliveryNetwork.Web.ViewModels.Admin
 {
-    public class AllApplicationsViewModel
+    public class AllApplicationsViewModel : BaseQueryModel
     {
-        public BaseQueryModel BaseQueryModel { get; set; } = new BaseQueryModel();
         public int TotalApplications { get; set; }
         public IEnumerable<SingleApplicationViewModel> Applications { get; set; } = new HashSet<SingleApplicationViewModel>();
     }

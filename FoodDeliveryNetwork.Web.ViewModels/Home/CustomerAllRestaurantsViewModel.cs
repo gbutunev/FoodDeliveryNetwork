@@ -2,9 +2,8 @@
 
 namespace FoodDeliveryNetwork.Web.ViewModels.Home
 {
-    public class CustomerAllRestaurantsViewModel
+    public class CustomerAllRestaurantsViewModel : BaseQueryModel
     {
-        public BaseQueryModel BaseQueryModel { get; set; } = new BaseQueryModel();
         public int TotalRestaurants { get; set; }
         public IEnumerable<CustomerRestaurantViewModel> Restaurants { get; set; } = new HashSet<CustomerRestaurantViewModel>();
     }

@@ -113,18 +113,15 @@ namespace FoodDeliveryNetwork.Services.Data
                 predicate = x => x.ApplicationStatus == OwnerApplicationStatus.Pending;
 
             model ??= new();
-            model.BaseQueryModel ??= new();
-
-            var query = model.BaseQueryModel;
 
             var pendingApplicationsQuery = dbContext
                 .OwnerApplications
                 .Where(predicate)
                 .AsQueryable();
 
-            if (!string.IsNullOrWhiteSpace(query.SearchTerm))
+            if (!string.IsNullOrWhiteSpace(model.SearchTerm))
             {
-                var wildcard = $"%{query.SearchTerm.ToLower()}%";
+                var wildcard = $"%{model.SearchTerm.ToLower()}%";
 
                 pendingApplicationsQuery = pendingApplicationsQuery
                     .Where(x => EF.Functions.Like(x.OwnerFullName.ToLower(), wildcard) ||
@@ -134,7 +131,7 @@ namespace FoodDeliveryNetwork.Services.Data
                                 EF.Functions.Like(x.HeadquartersFullAddress, wildcard));
             }
 
-            switch (query.SortBy)
+            switch (model.SortBy)
             {
                 case BaseQueryModelSort.Newest:
                     pendingApplicationsQuery = pendingApplicationsQuery.OrderByDescending(x => x.CreatedOn);
@@ -156,8 +153,8 @@ namespace FoodDeliveryNetwork.Services.Data
             model.TotalApplications = await pendingApplicationsQuery.CountAsync();
 
             IEnumerable<SingleApplicationViewModel> applications = await pendingApplicationsQuery
-                .Skip((query.Page - 1) * query.PageSize)
-                .Take(query.PageSize)
+                .Skip((model.Page - 1) * model.PageSize)
+                .Take(model.PageSize)
                 .Select(x => new SingleApplicationViewModel()
                 {
                     Id = x.Id,

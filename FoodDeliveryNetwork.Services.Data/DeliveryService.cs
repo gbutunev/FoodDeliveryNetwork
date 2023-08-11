@@ -30,12 +30,12 @@ namespace FoodDeliveryNetwork.Services.Data
                             .Where(x => restaurants.Contains(x.RestaurantId))
                             .Where(x => x.CourierId == null)
                             .Where(x => x.OrderStatus == OrderStatus.ReadyForPickup)
-                            .ApplySearchQuery(model.BaseQueryModel);
+                            .ApplySearchQuery(model);
 
             model.TotalOrders = await r.CountAsync();
 
             model.Orders = await r
-                    .ApplyPaginationQuery(model.BaseQueryModel)
+                    .ApplyPaginationQuery(model)
                     .Select(x => new SingleOrderViewModel()
                     {
                         Id = x.Id,
@@ -69,12 +69,12 @@ namespace FoodDeliveryNetwork.Services.Data
                 .Where(x => restaurants.Contains(x.RestaurantId))
                 .Where(x => x.CourierId.ToString() == userId)
                 .Where(x => x.OrderStatus == OrderStatus.OnTheWay)
-                .ApplySearchQuery(model.BaseQueryModel);
+                .ApplySearchQuery(model);
 
             model.TotalOrders = await r.CountAsync();
 
             model.Orders = await r
-                .ApplyPaginationQuery(model.BaseQueryModel)
+                .ApplyPaginationQuery(model)
                 .Select(x => new SingleOrderViewModel()
                 {
                     Id = x.Id,
@@ -108,12 +108,12 @@ namespace FoodDeliveryNetwork.Services.Data
                 .Where(x => restaurants.Contains(x.RestaurantId))
                 .Where(x => x.CourierId.ToString() == userId)
                 .Where(x => x.OrderStatus != OrderStatus.OnTheWay)
-                .ApplySearchQuery(model.BaseQueryModel);
+                .ApplySearchQuery(model);
 
             model.TotalOrders = await r.CountAsync();
 
             model.Orders = await r
-                .ApplyPaginationQuery(model.BaseQueryModel)
+                .ApplyPaginationQuery(model)
                 .Select(x => new SingleOrderViewModel()
                 {
                     Id = x.Id,
@@ -139,7 +139,7 @@ namespace FoodDeliveryNetwork.Services.Data
 
     public static class TestExtensions
     {
-        public static IQueryable<T> ApplySearchQuery<T>(this IQueryable<T> query, BaseQueryModel model) where T : Order
+        public static IQueryable<T> ApplySearchQuery<T>(this IQueryable<T> query, AllOrdersViewModel model) where T : Order
         {
             model ??= new();
 
@@ -170,7 +170,7 @@ namespace FoodDeliveryNetwork.Services.Data
             return query;
         }
 
-        public static IQueryable<T> ApplyPaginationQuery<T>(this IQueryable<T> query, BaseQueryModel model) where T : Order
+        public static IQueryable<T> ApplyPaginationQuery<T>(this IQueryable<T> query, AllOrdersViewModel model) where T : Order
         {
             model ??= new();
 
