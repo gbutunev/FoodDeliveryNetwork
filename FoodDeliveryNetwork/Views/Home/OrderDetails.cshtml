@@ -1,4 +1,5 @@
-﻿@using FoodDeliveryNetwork.Web.ViewModels.Home;
+﻿@using FoodDeliveryNetwork.Data.Models;
+@using FoodDeliveryNetwork.Web.ViewModels.Home;
 
 @model CustomerDetailedOrderViewModel
 
@@ -24,7 +25,31 @@
                 <div class="card-body">
                     <p><strong>Order ID:</strong> @Model.Id</p>
                     <p><strong>Delivery Address:</strong> @Model.Address</p>
-                    <p><strong>Order Status:</strong> <span class="order-status-badge order-status-@Model.OrderStatus.ToString().ToLower()">@Model.OrderStatus.ToString()</span></p>
+                    <p>
+                        <strong>Order Status:</strong> <span class="order-status-badge order-status-@Model.OrderStatus.ToString().ToLower()">
+                            @switch (Model.OrderStatus)
+                            {
+                                case OrderStatus.ReadyForPickup:
+                                    <span>Ready for pickup</span>
+                                    break;
+                                case OrderStatus.OnTheWay:
+                                    <span>On the way</span>
+                                    break;
+                                case OrderStatus.CancelledByCustomer:
+                                    <span>Cancelled by you</span>
+                                    break;
+                                case OrderStatus.CancelledByRestaurant:
+                                    <span>Cancelled by the restaurant</span>
+                                    break;
+                                case OrderStatus.ReturnedToRestaurant:
+                                    <span>Returned</span>
+                                    break;
+                                default:
+                                    <span>@Model.OrderStatus</span>
+                                    break;
+                            }
+                        </span>
+                    </p>
                     <p><strong>Created On:</strong> @Model.CreatedOn.ToString("yyyy-MM-dd HH:mm:ss")</p>
                     <p><strong>Total Price:</strong> @Model.TotalPrice</p>
                 </div>
@@ -65,46 +90,3 @@
         </div>
     </div>
 </div>
-
-<style>
-    .order-status-badge {
-        font-size: 14px;
-        padding: 5px 10px;
-        border-radius: 5px;
-        text-transform: capitalize;
-        font-weight: bold;
-        width: fit-content;
-    }
-
-    .order-status-pending {
-        background-color: #ffc107;
-        color: #000;
-    }
-
-    .order-status-cooking {
-        background-color: #17a2b8;
-        color: #fff;
-    }
-
-    .order-status-readyforpickup {
-        background-color: #28a745;
-        color: #fff;
-    }
-
-    .order-status-ontheway {
-        background-color: #007bff;
-        color: #fff;
-    }
-
-    .order-status-delivered {
-        background-color: #198754;
-        color: #fff;
-    }
-
-    .order-status-cancelledbycustomer,
-    .order-status-cancelledbyrestaurant,
-    .order-status-returnedtorestaurant {
-        background-color: #dc3545;
-        color: #fff;
-    }
-</style>

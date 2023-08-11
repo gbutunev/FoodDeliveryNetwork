@@ -6,7 +6,7 @@
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.JSInterop
 
-<h3>RestaurantOrderComponent</h3>
+<h3 class="mb-4">@currentRestaurant.Name</h3>
 
 @if (restaurantDishes is null || !restaurantDishes.Any())
 {
@@ -14,32 +14,38 @@
 }
 else
 {
-    <div>
-        <button class="btn btn-primary" @onclick=@ShowConfirmOrderPopup disabled=@(currentOrder.OrderItems.Count ==0)>Order</button>
-    </div>
+
+    <button class="btn btn-primary rounded-pill p-4 ms-auto mb-5 me-5 fixed-bottom" @onclick=@ShowConfirmOrderPopup disabled=@(currentOrder.OrderItems.Count ==0)>Order</button>
+
 
     @foreach (var dish in restaurantDishes)
     {
-        <div class="mb-2">
-            <p>@dish.Name</p>
-            <p>@dish.Description</p>
-            <p>@dish.Price</p>
-
-            <button class="btn btn-primary" @onclick=@(()=>RemoveDish(dish))>remove</button>
-
-            @if (currentOrder.OrderItems.ContainsKey(dish))
-            {
-                <span>
-                    @currentOrder.OrderItems[dish]
-                </span>
-            }
-            else
-            {
-                <span>0</span>
-            }
-
-            <button class="btn btn-primary" @onclick=@(()=>AddDish(dish))>add</button>
-
+        <div class="card mb-3 w-100">
+            <div class="row g-0">
+                <div class="col-md-4">
+                    @if (dish.ImageGuid is not null && dish.ImageType is not null)
+                    {
+                        <img src="data:@dish.ImageType;base64,@Convert.ToBase64String(dish.Image)" class="img-fluid rounded-start dish-img" alt="Dish Image">
+                        @*<img src="data:@dish.ImageType;base64,@Convert.ToBase64String(dish.Image)" alt="Image of @dish.Name" class="card-img-top card-img-custom" />*@
+                    }
+                    else
+                    {
+                        <img src="/images/no-img-placeholder.jpg" alt="No image" class="card-img-top card-img-custom" />
+                    }
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <h5 class="card-title">@dish.Name</h5>
+                        <p class="card-text">@dish.Description</p>
+                        <p class="card-text align-self-center">Price: @dish.Price</p>
+                        <div class="input-group">
+                            <button class="btn btn-outline-secondary" @onclick="() => RemoveDish(dish)">-</button>
+                            <input type="text" class="form-control text-center" value="@(currentOrder.OrderItems.ContainsKey(dish) ? currentOrder.OrderItems[dish] : 0)" readonly>
+                            <button class="btn btn-outline-secondary" @onclick="() => AddDish(dish)">+</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     }
 }
@@ -100,7 +106,7 @@ else
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick="@HideAddressPopup"></button>
                     </div>
                     <div class="modal-body">
-                        <DataAnnotationsValidator />                       
+                        <DataAnnotationsValidator />
 
                         <InputRadioGroup @bind-Value="addressPopupMode" class="mb-2">
                             <InputRadio Value="@AddressPopupMode.Saved" disabled=@(!hasSavedAddresses) />Your adresses

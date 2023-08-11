@@ -19,8 +19,8 @@
     User.IsInRole(AppConstants.RoleNames.CourierRole) ||
     User.IsInRole(AppConstants.RoleNames.DispatcherRole)))
     {
-        <li class="nav-item"><a class="nav-link id="my-addresses" asp-area="" asp-controller="/MyAddresses">My addresses</a></li>
-        <li class="nav-item"><a class="nav-link id="owner-application" asp-area="" asp-controller="/OwnerApplication">Owner application</a></li>
+        <li class="nav-item"><a class="nav-link id="my-addresses" asp-area="" asp-controller="Home" asp-action="MyAddresses">My addresses</a></li>
+        <li class="nav-item"><a class="nav-link id="owner-application" asp-area="" asp-controller="OwnerApplication">Owner application</a></li>
     }
 </ul>
 

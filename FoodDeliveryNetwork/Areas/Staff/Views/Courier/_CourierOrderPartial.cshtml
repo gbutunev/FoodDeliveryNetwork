@@ -21,7 +21,7 @@
             </div>
         </div>
     </div>
-    <div class="card-footer d-flex align-content-end flex-column">
+    <div class="card-footer d-flex align-content-end">
         @if (Model.OrderStatus == OrderStatus.ReadyForPickup)
         {
             @using (Html.BeginForm("ManageOrder", "Courier", new { area = "Staff" }, FormMethod.Post))
@@ -35,20 +35,24 @@
         }
         @if (Model.OrderStatus == OrderStatus.OnTheWay)
         {
-            @using (Html.BeginForm("ManageOrder", "Courier", new { area = "Staff" }, FormMethod.Post))
-            {
-                @Html.Hidden("orderId", Model.Id)
-                @Html.Hidden("newStatus", OrderStatus.Delivered)
+            <div class="d-inline-block">
+                @using (Html.BeginForm("ManageOrder", "Courier", new { area = "Staff" }, FormMethod.Post))
+                {
+                    @Html.Hidden("orderId", Model.Id)
+                    @Html.Hidden("newStatus", OrderStatus.Delivered)
 
-                <button type="submit" class="btn btn-success me-2">Delivered to Customer</button>
-            }
-            @using (Html.BeginForm("ManageOrder", "Courier", new { area = "Staff" }, FormMethod.Post))
-            {
-                @Html.Hidden("orderId", Model.Id)
-                @Html.Hidden("newStatus", OrderStatus.ReturnedToRestaurant)
+                    <button type="submit" class="btn btn-success me-2">Delivered to Customer</button>
+                }
+            </div>
+            <div class="d-inline-block">
+                @using (Html.BeginForm("ManageOrder", "Courier", new { area = "Staff" }, FormMethod.Post))
+                {
+                    @Html.Hidden("orderId", Model.Id)
+                    @Html.Hidden("newStatus", OrderStatus.ReturnedToRestaurant)
 
-                <button type="submit" class="btn btn-danger">Returned to Restaurant</button>
-            }
+                    <button type="submit" class="btn btn-danger">Returned to Restaurant</button>
+                }
+            </div>
         }
     </div>
 </div>

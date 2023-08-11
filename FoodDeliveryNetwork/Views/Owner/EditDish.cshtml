@@ -31,6 +31,10 @@
         @Html.ValidationMessageFor(model => model.Image, "", new { @class = "text-danger" })
     </div>
 
+    <div class="alert alert-light" role="alert">
+        If no new image is selected, the old one will be used.
+    </div>
+
     @Html.HiddenFor(model => model.DishId)
     @Html.HiddenFor(model => model.RestaurantId)
 

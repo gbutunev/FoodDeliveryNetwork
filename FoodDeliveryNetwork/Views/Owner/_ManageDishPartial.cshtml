@@ -2,46 +2,40 @@
 
 @model DishViewModel
 
-<div class="card">
-    <div class="card-header">
-        @Model.Name
-    </div>
-    <div class="card-body">
-        <div class="row mx-1">
-            <div class="col">
-                @if (Model.ImageGuid is not null && Model.ImageType is not null)
-                {
-                    <img src="data:@Model.ImageType;base64,@Convert.ToBase64String(Model.Image)" alt="Image of @Model.Name" class="card-img-top card-img-custom" />
-                }
-                else
-                {
-                    <img src="/images/no-img-placeholder.jpg" alt="No image" class="card-img-top card-img-custom" />
-                }
-            </div>
-            <div class="col">
-                <div class="row">
-                    @Model.Description
-                </div>
-                <div class="row">
-                    Price: @Model.Price
-                </div>
-            </div>
+<div class="card mb-3 w-100">
+    <div class="row g-0">
+        <div class="col-md-4">
+            @if (Model.ImageGuid is not null && Model.ImageType is not null)
+            {
+                <img src="data:@Model.ImageType;base64,@Convert.ToBase64String(Model.Image)" alt="Image of @Model.Name" class="card-img-top card-img-custom" />
+            }
+            else
+            {
+                <img src="/images/no-img-placeholder.jpg" alt="No image" class="card-img-top card-img-custom" />
+            }
         </div>
-        <div class="col-md-12 clearfix">
-            @using (Html.BeginForm("EditDish", "Owner", new { restaurantId = Model.RestaurantId }, FormMethod.Get))
-            {
-                @Html.HiddenFor(m => m.DishId)
-                @Html.HiddenFor(m => m.RestaurantId)
+        <div class="col-md-8">
+            <div class="card-body">
+                <h5 class="card-title">@Model.Name</h5>
+                <p class="card-text">@Model.Description</p>
+                <p class="card-text align-self-center">Price: @Model.Price</p>
+                <div class="col-md-12 clearfix mt-auto">
+                    @using (Html.BeginForm("EditDish", "Owner", new { restaurantId = Model.RestaurantId }, FormMethod.Get))
+                    {
+                        @Html.HiddenFor(m => m.DishId)
+                        @Html.HiddenFor(m => m.RestaurantId)
 
-                <button type="submit" class="btn btn-warning float-end mx-1">Edit</button>
-            }
-            @using (Html.BeginForm("DeleteDish", "Owner", FormMethod.Post))
-            {
-                @Html.HiddenFor(m => m.DishId)
-                @Html.HiddenFor(m => m.RestaurantId)
+                        <button type="submit" class="btn btn-warning float-end mx-1">Edit</button>
+                    }
+                    @using (Html.BeginForm("DeleteDish", "Owner", FormMethod.Post))
+                    {
+                        @Html.HiddenFor(m => m.DishId)
+                        @Html.HiddenFor(m => m.RestaurantId)
 
-                <button type="submit" class="btn btn-danger float-end mx-1">Delete</button>
-            }
+                        <button type="submit" class="btn btn-danger float-end mx-1">Delete</button>
+                    }
+                </div>
+            </div>
         </div>
     </div>
 </div>

@@ -1,4 +1,5 @@
-﻿@using FoodDeliveryNetwork.Web.ViewModels.Home;
+﻿@using FoodDeliveryNetwork.Data.Models;
+@using FoodDeliveryNetwork.Web.ViewModels.Home;
 
 @model CustomerBasicOrderViewModel
 
@@ -7,26 +8,82 @@
         Order from <a href="/Home/Restaurant/@Model.RestaurantHandle">@Model.RestaurantName</a>
     </div>
     <ul class="list-group list-group-flush">
-        <li class="list-group-item">Created on: @Model.CreatedOn</li>
-        <li class="list-group-item">@Model.RestaurantPhoneNumber</li>
-        <li class="list-group-item">@Model.OrderStatus</li>
-        <li class="list-group-item">@Model.Address</li>
-        <li class="list-group-item">@Model.TotalItemsCount</li>
-        <li class="list-group-item">@Model.TotalPrice</li>
         <li class="list-group-item">
-            @if (Model.OrderStatus == FoodDeliveryNetwork.Data.Models.OrderStatus.Pending)
-            {
-                @using (Html.BeginForm("CancelOrder", "Home", FormMethod.Post))
+            <div class="row">
+                <div class="col">Created:</div>
+                <div class="col">@Model.CreatedOn</div>
+            </div>
+        </li>
+        <li class="list-group-item">
+            <div class="row">
+                <div class="col">Contact:</div>
+                <div class="col">@Model.RestaurantPhoneNumber</div>
+            </div>
+        </li>
+        <li class="list-group-item">
+            <div class="row">
+                <div class="col">Order status:</div>
+                <div class="col">
+                    <span class="order-status-badge order-status-@Model.OrderStatus.ToString().ToLower()">
+                        @switch (Model.OrderStatus)
+                        {
+                            case OrderStatus.ReadyForPickup:
+                                <span>Ready for pickup</span>
+                                break;
+                            case OrderStatus.OnTheWay:
+                                <span>On the way</span>
+                                break;
+                            case OrderStatus.CancelledByCustomer:
+                                <span>Cancelled by you</span>
+                                break;
+                            case OrderStatus.CancelledByRestaurant:
+                                <span>Cancelled by the restaurant</span>
+                                break;
+                            case OrderStatus.ReturnedToRestaurant:
+                                <span>Returned</span>
+                                break;
+                            default:
+                                <span>@Model.OrderStatus</span>
+                                break;
+                        }
+                    </span>
+                </div>
+            </div>
+        </li>
+        <li class="list-group-item">
+            <div class="row">
+                <div class="col">Restaurant addrress:</div>
+                <div class="col">@Model.Address</div>
+            </div>
+        </li>
+        <li class="list-group-item">
+            <div class="row">
+                <div class="col">Order items:</div>
+                <div class="col">@Model.TotalItemsCount</div>
+            </div>
+        </li>
+        <li class="list-group-item">
+            <div class="row">
+                <div class="col">Total price</div>
+                <div class="col">@Model.TotalPrice</div>
+            </div>
+        </li>
+        <li class="list-group-item">
+            <div class="d-flex">
+                @if (Model.OrderStatus == FoodDeliveryNetwork.Data.Models.OrderStatus.Pending)
                 {
-                    @Html.HiddenFor(m => m.Id)
-                    <button type="submit" class="btn btn-danger">Cancel order</button>
+                    @using (Html.BeginForm("CancelOrder", "Home", FormMethod.Post))
+                    {
+                        @Html.HiddenFor(m => m.Id)
+                        <button type="submit" class="btn btn-danger">Cancel order</button>
+                    }
                 }
-            }
-            else
-            {
-                <button class="btn btn-danger" disabled>Cancel order</button>
-            }
-            <a href="/Home/OrderDetails/@Model.Id.ToString()" class="btn btn-info" disabled>Details</a>
+                else
+                {
+                    <button class="btn btn-danger" disabled>Cancel order</button>
+                }
+                <a href="/Home/OrderDetails/@Model.Id.ToString()" class="btn btn-info ms-auto" disabled>Details</a>
+            </div>
         </li>
     </ul>
 </div>

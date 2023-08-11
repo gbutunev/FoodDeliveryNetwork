@@ -52,7 +52,9 @@ else
 
     @foreach (var order in Model.Orders)
     {
+        <div class="mb-2">
         @await Html.PartialAsync("_CourierOrderPartial", order)
+        </div>
     }
 
     <nav aria-label="Page navigation">
