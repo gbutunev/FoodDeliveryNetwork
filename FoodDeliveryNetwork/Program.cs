@@ -40,7 +40,7 @@ namespace FoodDeliveryNetwork.Web
             builder.Services.AddControllersWithViews(options =>
             {
                 options.ModelBinderProviders.Insert(0, new DecimalModelBinderProvider());
-                options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());                
+                options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
             });
 
             builder.Services.AddServerSideBlazor().AddCircuitOptions(o =>
@@ -72,7 +72,8 @@ namespace FoodDeliveryNetwork.Web
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Home/Error/500");
+                app.UseStatusCodePagesWithRedirects("/Home/Error?statusCode={0}");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
