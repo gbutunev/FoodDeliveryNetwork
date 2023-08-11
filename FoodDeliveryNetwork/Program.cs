@@ -1,3 +1,4 @@
+using Blazored.LocalStorage;
 using FoodDeliveryNetwork.Data;
 using FoodDeliveryNetwork.Data.Models;
 using FoodDeliveryNetwork.Services.Data;
@@ -49,6 +50,8 @@ namespace FoodDeliveryNetwork.Web
             {
                 o.DetailedErrors = builder.Environment.IsDevelopment();
             });
+
+            //builder.Services.AddBlazoredLocalStorage();
 
             builder.Services.AddScoped<IOwnerApplicationService, OwnerApplicationService>();
             builder.Services.AddScoped<IRestaurantService, RestaurantService>();
