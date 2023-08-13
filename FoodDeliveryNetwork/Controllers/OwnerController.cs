@@ -27,6 +27,7 @@ namespace FoodDeliveryNetwork.Web.Controllers
         }
 
         //MyRestaurants
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             var ownerId = User.GetId();
@@ -152,6 +153,9 @@ namespace FoodDeliveryNetwork.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> EditRestaurant(string id, RestaurantFormModel model)
         {
+            if (!ModelState.IsValid)
+                return View(model);
+
             string oldImageGuid = (await restaurantService.GetRestaurantByIdAsync(Guid.Parse(id))).ImageGuid;
             if (model.Image is not null && model.Image.Length > 0)
             {
@@ -514,6 +518,9 @@ namespace FoodDeliveryNetwork.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> ЕditDishSubmit(DishFormModel model)
         {
+            if (!ModelState.IsValid)
+                return View(nameof(EditDish), model);
+
             bool isOwner = await restaurantService.RestaurantIsOwnedByUserAsync(model.RestaurantId.ToString(), User.GetId());
             if (!isOwner) return RedirectToAction(nameof(Index));
 

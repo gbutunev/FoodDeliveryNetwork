@@ -17,6 +17,8 @@ namespace FoodDeliveryNetwork.Web.Controllers
         {
             this.ownerApplicationService = ownerApplicationService;
         }
+
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             string userId = User.GetId();
